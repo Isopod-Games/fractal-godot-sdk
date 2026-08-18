@@ -1,5 +1,10 @@
 # Fractal SDK for Godot 4.x
 
+> **This repository is a mirror.** It is generated from Fractal's monorepo,
+> which is where development happens. Edits made here are overwritten by the
+> next sync, and pull requests cannot be merged directly — please open an
+> issue describing the change instead.
+
 Toggleable analytics, error tracking, and translations sync for Godot 4.x games — all behind a single `Fractal` autoload.
 
 ```gdscript
