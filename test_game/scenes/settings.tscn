@@ -1,0 +1,110 @@
+[gd_scene load_steps=2 format=3 uid="uid://b1settingsctest"]
+
+[ext_resource type="Script" path="res://test_game/scripts/settings_controller.gd" id="1"]
+
+[node name="Settings" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1")
+
+[node name="Background" type="ColorRect" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0.16, 0.13, 0.1, 1)
+
+[node name="VBox" type="VBoxContainer" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 24.0
+offset_top = 24.0
+offset_right = -24.0
+offset_bottom = -24.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/separation = 10
+
+[node name="LanguageRow" type="HBoxContainer" parent="VBox"]
+layout_mode = 2
+theme_override_constants/separation = 8
+
+[node name="LanguageLabel" type="Label" parent="VBox/LanguageRow"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "Language"
+
+[node name="LanguagePicker" type="OptionButton" parent="VBox/LanguageRow"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="SyncButton" type="Button" parent="VBox"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 36)
+layout_mode = 2
+text = "Sync now"
+
+[node name="ThrowErrorButton" type="Button" parent="VBox"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 36)
+layout_mode = 2
+text = "Throw error"
+
+[node name="ThrowFatalButton" type="Button" parent="VBox"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 36)
+layout_mode = 2
+text = "Throw fatal"
+
+[node name="ForceCrashButton" type="Button" parent="VBox"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 36)
+layout_mode = 2
+text = "Force crash"
+
+[node name="KillAppButton" type="Button" parent="VBox"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 36)
+layout_mode = 2
+text = "Kill app (heartbeat test)"
+
+[node name="ForceSegfaultButton" type="Button" parent="VBox"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 36)
+layout_mode = 2
+text = "Force native segfault (Phase B)"
+
+[node name="AnalyticsToggle" type="CheckButton" parent="VBox"]
+unique_name_in_owner = true
+layout_mode = 2
+button_pressed = true
+text = "Analytics enabled"
+
+[node name="ErrorsToggle" type="CheckButton" parent="VBox"]
+unique_name_in_owner = true
+layout_mode = 2
+button_pressed = true
+text = "Errors enabled"
+
+[node name="BackButton" type="Button" parent="VBox"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 40)
+layout_mode = 2
+text = "Back"
+
+[node name="CrashConfirm" type="ConfirmationDialog" parent="."]
+unique_name_in_owner = true
+title = "Confirm crash"
+initial_position = 2
+size = Vector2i(280, 100)
+ok_button_text = "Crash"
+dialog_text = "Force crash?"

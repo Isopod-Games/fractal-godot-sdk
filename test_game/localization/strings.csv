@@ -1,0 +1,23 @@
+keys,en,es,fr
+menu.title,Click Empire,Imperio del Clic,Empire du Clic
+menu.play,Play,Jugar,Jouer
+menu.settings,Settings,Ajustes,Paramètres
+clicker.tap,TAP,TOQUE,TAPER
+clicker.shop,Shop,Tienda,Boutique
+clicker.achievements,Achievements,Logros,Succès
+clicker.settings,Settings,Ajustes,Paramètres
+clicker.menu,Menu,Menú,Menu
+shop.tap_power,Upgrade Tap (10c),Mejorar toque (10m),Améliorer (10p)
+shop.auto_clicker,Hire Clicker (50c),Contratar (50m),Embaucher (50p)
+shop.prestige,Prestige (1000c),Prestigio (1000m),Prestige (1000p)
+settings.language,Language,Idioma,Langue
+settings.sync,Sync now,Sincronizar,Synchroniser
+settings.throw_error,Throw error,Lanzar error,Lancer erreur
+settings.throw_fatal,Throw fatal,Error fatal,Erreur fatale
+settings.force_crash,Force crash,Forzar crash,Forcer crash
+settings.back,Back,Volver,Retour
+achievement.first_click,First Click,Primer Clic,Premier Clic
+achievement.hundred_coins,100 Coins,100 monedas,100 pièces
+achievement.thousand_coins,1000 Coins,1000 monedas,1000 pièces
+achievement.first_upgrade,First Upgrade,Primera mejora,Première amélioration
+achievement.first_prestige,Prestige Master,Maestro del prestigio,Maître du prestige

@@ -1,0 +1,28 @@
+[configuration]
+
+entry_symbol = "fractal_native_library_init"
+compatibility_minimum = "4.4"
+
+[libraries]
+
+macos.arm64 = "res://addons/fractal_native/bin/macos-arm64/libfractal_native.dylib"
+macos.debug.arm64 = "res://addons/fractal_native/bin/macos-arm64/libfractal_native.dylib"
+macos.editor.arm64 = "res://addons/fractal_native/bin/macos-arm64/libfractal_native.dylib"
+linux.x86_64 = "res://addons/fractal_native/bin/linux-x86_64/libfractal_native.so"
+linux.debug.x86_64 = "res://addons/fractal_native/bin/linux-x86_64/libfractal_native.so"
+linux.editor.x86_64 = "res://addons/fractal_native/bin/linux-x86_64/libfractal_native.so"
+windows.x86_64 = "res://addons/fractal_native/bin/windows-x86_64/fractal_native.dll"
+windows.debug.x86_64 = "res://addons/fractal_native/bin/windows-x86_64/fractal_native.dll"
+windows.editor.x86_64 = "res://addons/fractal_native/bin/windows-x86_64/fractal_native.dll"
+
+[dependencies]
+
+macos = {
+    "res://addons/fractal_native/bin/macos-arm64/crashpad_handler" : ""
+}
+linux = {
+    "res://addons/fractal_native/bin/linux-x86_64/crashpad_handler" : ""
+}
+windows = {
+    "res://addons/fractal_native/bin/windows-x86_64/crashpad_handler.exe" : ""
+}

@@ -1,0 +1,19 @@
+# godot-cpp + sentry-native are pulled fresh each build (CI does this via
+# build_*.sh; locally `make` does the same). The compiled bindings + the
+# bundled crashpad_handler under bin/ are the only artifacts we commit.
+build/godot-cpp/
+build/sentry-native/
+
+# SCons intermediates
+*.os
+*.obj
+*.lo
+.sconsign.dblite
+**/build_*/
+
+# We ship per-platform binaries under bin/; everything else under bin/
+# is incidental (scons sometimes leaves .pdb files etc.)
+bin/**/*.pdb
+bin/**/*.exp
+bin/**/*.lib
+bin/**/*.dSYM/
