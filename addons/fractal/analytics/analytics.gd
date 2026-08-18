@@ -1,5 +1,5 @@
 extends Node
-## Analytics subsystem — `Fractal.analytics`.
+## Analytics subsystem, `Fractal.analytics`.
 ##
 ## Public API:
 ##   track(event_type, payload)
@@ -67,7 +67,7 @@ func configure(config: FractalConfigClass) -> void:
 	if _player_id.is_empty():
 		_player_id = FractalPersistenceClass.resolve_player_id()
 
-	# Restore any events persisted from a previous session — but only on
+	# Restore any events persisted from a previous session, but only on
 	# first-time configure (queue empty). On reconfigure we keep the live
 	# queue intact so events tracked between configure() calls aren't lost.
 	if _queue.is_empty():
@@ -141,7 +141,7 @@ func is_enabled() -> bool:
 	return _enabled
 
 
-## Called by the Fractal autoload on shutdown — persists pending events for retry.
+## Called by the Fractal autoload on shutdown, persists pending events for retry.
 func shutdown() -> void:
 	if not _enabled:
 		return
@@ -189,7 +189,7 @@ func _on_request_failed(error: String, response_code: int = 0) -> void:
 	var dropped_count: int = _pending_batch.size()
 	var permanently_rejected: bool = response_code >= 400 and response_code < 500 and response_code != 429
 	if permanently_rejected:
-		# Permanent 4xx (never retried by http_client.gd) — the collector will
+		# Permanent 4xx (never retried by http_client.gd), the collector will
 		# never accept this batch (blocked key, malformed payload, etc.).
 		# Retrying it every session would wedge future uploads behind one
 		# poison batch forever, so dead-letter it instead: don't lose the
@@ -205,7 +205,7 @@ func _on_request_failed(error: String, response_code: int = 0) -> void:
 		FractalPersistenceClass.save_events(pending)
 	elif permanently_rejected:
 		FractalPersistenceClass.clear_events()
-	# Do not flush here — the 5s timer handles it; an immediate flush after
+	# Do not flush here, the 5s timer handles it; an immediate flush after
 	# exhausted retries would restart a new backoff cycle with no delay.
 
 

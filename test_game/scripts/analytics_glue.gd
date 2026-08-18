@@ -2,7 +2,7 @@ extends Node
 ## Bridges GameState signals to Fractal SDK calls + handles one-time SDK init.
 ##
 ## Registered as the `AnalyticsGlue` autoload (see project.godot). This is the
-## single place where the test game tells Fractal "this happened" — keeping
+## single place where the test game tells Fractal "this happened", keeping
 ## analytics tied to here makes assertions in tests straightforward.
 
 const TRANSLATION_CSV := "res://test_game/localization/strings.csv"
@@ -19,13 +19,13 @@ func _ready() -> void:
 	_register_translations_from_csv()
 
 	# CI bypass: when FRACTAL_CI_MODE is set, the live integration driver
-	# fully controls Fractal.configure(...) — skip the placeholder init here
+	# fully controls Fractal.configure(...), skip the placeholder init here
 	# so the driver's call is the FIRST configure (and therefore the one
 	# that drives the persisted-state drain).
 	if not OS.get_environment("FRACTAL_CI_MODE").is_empty():
 		return
 
-	# One-time SDK init. Failures (e.g., collector unreachable) are silent — the
+	# One-time SDK init. Failures (e.g., collector unreachable) are silent, the
 	# SDK queues + retries, so the game keeps running without nagging the player.
 	Fractal.configure(_build_config())
 	Fractal.analytics.start_session()
@@ -103,7 +103,7 @@ func _register_translations_from_csv() -> void:
 	if header_line.size() < 2:
 		file.close()
 		return
-	# Header: keys, en, es, fr — locale columns start at index 1.
+	# Header: keys, en, es, fr, locale columns start at index 1.
 	var locales: Array[String] = []
 	for i in range(1, header_line.size()):
 		locales.append(header_line[i])
@@ -127,6 +127,6 @@ func _register_translations_from_csv() -> void:
 	for locale in locales:
 		TranslationServer.add_translation(translations_per_locale[locale])
 
-	# Default to English on first run — game scripts use tr() throughout.
+	# Default to English on first run, game scripts use tr() throughout.
 	if "en" in locales:
 		TranslationServer.set_locale("en")

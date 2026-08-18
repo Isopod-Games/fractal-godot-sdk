@@ -50,7 +50,7 @@ func test_track_sends_batch_with_expected_payload() -> void:
 	analytics.track("level_complete", {"level": 6})
 	analytics.track("level_complete", {"level": 7})
 
-	# Wait for HTTP request to complete (real socket — give it generous time).
+	# Wait for HTTP request to complete (real socket, give it generous time).
 	# Use direct signal connection rather than gdUnit4's signal collector which
 	# can race with synchronous emissions from connected callbacks.
 	var sent_counts: Array = []
@@ -96,7 +96,7 @@ func test_track_no_op_when_disabled() -> void:
 
 
 func test_permanent_4xx_drops_batch() -> void:
-	# 400 — permanent client error, never retried. The batch must be dropped
+	# 400, permanent client error, never retried. The batch must be dropped
 	# (not persisted) so a poisoned payload can't loop forever on relaunch.
 	server.enqueue_response("POST", "/v1/batch", 400, "bad request")
 

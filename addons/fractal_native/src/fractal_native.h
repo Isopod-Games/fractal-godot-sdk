@@ -1,14 +1,14 @@
 #ifndef FRACTAL_NATIVE_H
 #define FRACTAL_NATIVE_H
 
-// FractalNative — GDExtension that wraps sentry-native (Crashpad backend)
+// FractalNative, GDExtension that wraps sentry-native (Crashpad backend)
 // to capture native crashes (SIGSEGV, SIGABRT, SIGBUS, SIGFPE, SIGILL on
 // Unix; SetUnhandledExceptionFilter on Windows). When a crash occurs, the
 // out-of-process crashpad_handler writes a minidump to the configured
 // database path (`user://fractal/minidumps/`). On the next launch, the
 // GDScript layer drains that directory and uploads via /v1/minidumps.
 //
-// Sentry-native is configured WITHOUT a Sentry DSN — we only use it for
+// Sentry-native is configured WITHOUT a Sentry DSN, we only use it for
 // its crash backend, not its uploader. The metadata (user, tags,
 // breadcrumbs) is written by the GDScript layer alongside the dump for
 // the upload to pair correctly.
@@ -55,7 +55,7 @@ public:
 	// catch a stale/mismatched binary (see errors.gd::_arm_native).
 	String get_version() const;
 
-	// Scope mutators — applied to all subsequent crashes.
+	// Scope mutators, applied to all subsequent crashes.
 	void set_user(const String &id, const Dictionary &extra);
 	void set_tag(const String &key, const String &value);
 	void add_breadcrumb(const String &message,

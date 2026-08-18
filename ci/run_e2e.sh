@@ -70,7 +70,7 @@ cleanup() {
   # Reset the test DB so e2e seed data does not pollute the unit/request
   # test suite that runs afterwards in CI (or locally). Postgres can take a
   # moment to reap the just-killed backends, so db:test:prepare can
-  # transiently fail with "database is being accessed by other users" —
+  # transiently fail with "database is being accessed by other users"
   # retry instead of silently swallowing it, or the unit/request suite
   # inherits stale committed e2e data on its next run.
   for attempt in 1 2 3 4 5; do
@@ -79,7 +79,7 @@ cleanup() {
     sleep 1
   done
   if [ "$exit_status" -ne 0 ]; then
-    echo "ERROR: db:test:prepare failed after retries during e2e cleanup — test DB may still hold e2e data:" >&2
+    echo "ERROR: db:test:prepare failed after retries during e2e cleanup, test DB may still hold e2e data:" >&2
     cat /tmp/fractal-e2e-cleanup.log >&2
     exit 1
   fi
@@ -167,7 +167,7 @@ if [ ! -f "$SESSION_MARKER" ] || ! grep -q '"clean":false' "$SESSION_MARKER"; th
   ls -la "$(dirname "$SESSION_MARKER")" 2>/dev/null || true
   exit 1
 fi
-echo "Crash phase 1 OK — unclean marker on disk"
+echo "Crash phase 1 OK, unclean marker on disk"
 
 # ── 7. Crash-replay phase 2: relaunch + verify AbnormalShutdown ─────────────
 echo "==> Godot e2e: verify_replay mode..."
@@ -220,7 +220,7 @@ if ls "$NATIVE_LIB"/libfractal_native.* >/dev/null 2>&1 || ls "$NATIVE_LIB"/frac
   echo "==> Godot e2e: native_verify mode..."
   (cd "$SDK_DIR" && run_driver native_verify)
 else
-  echo "Skipping native crash phases — lib not found at $NATIVE_LIB (run with FRACTAL_BUILD_NATIVE=1 to build it)"
+  echo "Skipping native crash phases, lib not found at $NATIVE_LIB (run with FRACTAL_BUILD_NATIVE=1 to build it)"
 fi
 
 # ── 9. Assert ClickHouse event counts ────────────────────────────────────────

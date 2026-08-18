@@ -2,7 +2,7 @@
 # Dispatches the native_build matrix on GitHub when native source has changed
 # relative to main. Waits for the run to complete (~45 min when triggered),
 # then offers to run fetch_native_artifacts.sh to stage the binaries and bump
-# each platform's NATIVE_BINARY_VERSIONS entry — still doesn't commit; that's
+# each platform's NATIVE_BINARY_VERSIONS entry, still doesn't commit; that's
 # on you.
 #
 # Optional: a local build (build_local.sh, run via FRACTAL_BUILD_NATIVE=1
@@ -31,11 +31,11 @@ CHANGED=$(git diff --name-only "origin/main...HEAD" 2>/dev/null \
   || true)
 
 if [ -z "$CHANGED" ]; then
-  echo "Skipped — no native source changes relative to main"
+  echo "Skipped, no native source changes relative to main"
   exit 0
 fi
 
-echo "==> Native source changed — dispatching matrix build on GitHub (branch: $BRANCH)..."
+echo "==> Native source changed, dispatching matrix build on GitHub (branch: $BRANCH)..."
 gh workflow run native_build.yml --ref "$BRANCH"
 
 # Poll until GitHub registers the new run (usually a few seconds)
@@ -49,11 +49,11 @@ for i in $(seq 1 12); do
 done
 
 if [ -z "$RUN_ID" ]; then
-  echo "ERROR: could not find dispatched run — check GitHub Actions tab" >&2
+  echo "ERROR: could not find dispatched run, check GitHub Actions tab" >&2
   exit 1
 fi
 
-echo "Run #$RUN_ID queued — waiting for completion (~45 min)..."
+echo "Run #$RUN_ID queued, waiting for completion (~45 min)..."
 gh run watch "$RUN_ID" --exit-status
 echo "Matrix build passed."
 
@@ -66,6 +66,6 @@ fi
 if [ "$FETCH" = true ]; then
   "$CI_DIR/fetch_native_artifacts.sh" --run-id "$RUN_ID"
 else
-  echo "Skipped fetch — run manually later with:"
+  echo "Skipped fetch, run manually later with:"
   echo "  sdks/godot/ci/fetch_native_artifacts.sh --run-id $RUN_ID"
 fi

@@ -1,5 +1,5 @@
 extends Control
-## Main menu — title + Play/Settings buttons.
+## Main menu, title + Play/Settings buttons.
 
 const CLICKER_SCENE := "res://test_game/scenes/clicker.tscn"
 const SETTINGS_SCENE := "res://test_game/scenes/settings.tscn"
@@ -8,7 +8,7 @@ const SETTINGS_SCENE := "res://test_game/scenes/settings.tscn"
 @onready var play_button: Button = %PlayButton
 @onready var settings_button: Button = %SettingsButton
 
-# Static so it survives scene-change cycles within one process — we want
+# Static so it survives scene-change cycles within one process, we want
 # `app_open` exactly once per app launch, not once per "return to main menu".
 static var _emitted_app_open: bool = false
 
@@ -25,7 +25,7 @@ func _ready() -> void:
 
 func _notification(what: int) -> void:
 	# `_notification` can fire before `_ready` (e.g. translation registered while the
-	# scene is still being constructed) — bail until @onready vars are populated.
+	# scene is still being constructed), bail until @onready vars are populated.
 	if what == NOTIFICATION_TRANSLATION_CHANGED and is_node_ready():
 		_refresh_text()
 

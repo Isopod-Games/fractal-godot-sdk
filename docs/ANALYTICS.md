@@ -1,4 +1,4 @@
-# Analytics — `Fractal.analytics`
+# Analytics, `Fractal.analytics`
 
 Event tracking subsystem. Events are batched and sent to `POST {collector_url}/v1/batch` with the `X-API-Key` header. When the batch send fails, events are persisted to disk (`user://fractal/analytics_queue.json`) and replayed on the next session.
 
@@ -15,7 +15,7 @@ Fractal.analytics.flush() -> void
 Fractal.analytics.start_session() -> void
 Fractal.analytics.end_session() -> void
 
-# Player ID — auto-generated `godot_<uuid>` and persisted, but you can override.
+# Player ID, auto-generated `godot_<uuid>` and persisted, but you can override.
 Fractal.analytics.set_player_id(id: String) -> void
 Fractal.analytics.get_player_id() -> String
 Fractal.analytics.get_session_token() -> String
@@ -65,12 +65,12 @@ The SDK posts:
 - A 5-second timer also calls `check_flush(...)`, which forces a send if `analytics_flush_interval` (default 30s) has elapsed since the last send.
 - The queue caps at `analytics_max_queue_size` (default 1000); when full, the oldest events are dropped and `queue_overflow` is logged.
 - On send failure, the events are persisted to `user://fractal/analytics_queue.json` for retry on next launch.
-- On HTTP 5xx / 429, the send is retried with exponential backoff (1s → 2s → 4s → 8s → 16s, capped at 60s, max 5 retries).
-- On HTTP 4xx (other than 429), the request fails fast with no retry — the events are still persisted for you to inspect.
+- On HTTP 5xx / 429, the send is retried with exponential backoff (1s -> 2s -> 4s -> 8s -> 16s, capped at 60s, max 5 retries).
+- On HTTP 4xx (other than 429), the request fails fast with no retry, the events are still persisted for you to inspect.
 
 ## Game-specific events
 
-There are no genre-specific helpers — the analytics API is fully generic. Game-specific events are just `track()` calls with whatever payload shape makes sense for your game:
+There are no genre-specific helpers, the analytics API is fully generic. Game-specific events are just `track()` calls with whatever payload shape makes sense for your game:
 
 ```gdscript
 Fractal.analytics.track("run_end", {
@@ -87,8 +87,8 @@ Fractal.analytics.track("run_end", {
 
 If `analytics_enabled = false`, every method on `Fractal.analytics` returns immediately:
 
-- `track()` does nothing — no queueing, no signals, no HTTP.
+- `track()` does nothing, no queueing, no signals, no HTTP.
 - `flush()` does nothing.
-- `get_player_id()` still returns the persisted ID — both `Fractal.analytics` and `Fractal.errors` resolve the same on-disk ID via the shared `FractalPersistence.resolve_player_id()` contract, so whichever subsystem configures first creates it and the other reuses it. This holds even if `analytics_enabled = false`, since `Fractal.errors` resolves its own copy independently.
+- `get_player_id()` still returns the persisted ID, both `Fractal.analytics` and `Fractal.errors` resolve the same on-disk ID via the shared `FractalPersistence.resolve_player_id()` contract, so whichever subsystem configures first creates it and the other reuses it. This holds even if `analytics_enabled = false`, since `Fractal.errors` resolves its own copy independently.
 
-This means game code can call `Fractal.analytics.track(...)` unconditionally — disabled = silent.
+This means game code can call `Fractal.analytics.track(...)` unconditionally, disabled = silent.

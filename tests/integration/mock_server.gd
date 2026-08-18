@@ -11,7 +11,7 @@ extends Node
 ##     await server.received_request   # await one request
 ##     assert that server.requests has the expected payload
 ##
-## Not a general-purpose server — only enough to satisfy this SDK's traffic.
+## Not a general-purpose server, only enough to satisfy this SDK's traffic.
 
 signal received_request(request: Dictionary)
 

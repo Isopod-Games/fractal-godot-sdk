@@ -69,7 +69,7 @@ static func load_events() -> Array:
 	var data: Variant = json.data
 	if not data is Array:
 		return []
-	# JSON has no int/float distinction — Godot parses all numbers as float,
+	# JSON has no int/float distinction. Godot parses all numbers as float,
 	# which would silently poison client_seq for restored events.
 	for event in data:
 		if event is Dictionary and event.has("client_seq"):
@@ -99,7 +99,7 @@ static func clear_events() -> void:
 
 
 # ─── Dead-letter analytics queue ──────────────────────────────────────────
-# Holds batches the collector permanently rejected (4xx other than 429) —
+# Holds batches the collector permanently rejected (4xx other than 429)
 # retrying these forever would wedge all future uploads behind one poison
 # batch. Never auto-retried; kept on disk so the batch can be inspected
 # out-of-band. Mirrors the error dead-letter queue below.
@@ -141,7 +141,7 @@ static func append_to_dead_letter_events(events: Array) -> void:
 # ─── Error queue (retry-safe across launches) ─────────────────────────────
 # Mirrors the analytics queue: each entry is a fully-built error event
 # (the same shape POSTed to /v1/errors). Drained on configure and on every
-# successful flush. Cap at MAX_PERSISTED_ERRORS — when full, oldest go.
+# successful flush. Cap at MAX_PERSISTED_ERRORS, when full, oldest go.
 
 static func load_error_queue() -> Array:
 	if not FileAccess.file_exists(ERROR_QUEUE_PATH):
@@ -191,7 +191,7 @@ static func clear_error_queue() -> void:
 
 
 # ─── Dead-letter error queue ───────────────────────────────────────────────
-# Holds batches the collector permanently rejected (4xx other than 402/429) —
+# Holds batches the collector permanently rejected (4xx other than 402/429)
 # retrying these forever would wedge all future uploads behind one poison
 # event. Never auto-retried; kept on disk so the bad payload can be inspected
 # out-of-band.
@@ -289,7 +289,7 @@ static func load_translation_cache(locale: String) -> Dictionary:
 	file.close()
 	var json := JSON.new()
 	if json.parse(text) != OK:
-		# Corrupt cache — drop it.
+		# Corrupt cache, drop it.
 		DirAccess.remove_absolute(path)
 		return {}
 	var data: Variant = json.data

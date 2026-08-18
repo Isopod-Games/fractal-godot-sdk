@@ -47,7 +47,7 @@ func _make_config() -> FractalConfig:
 	# Timer + abnormal-shutdown inference don't interfere with tests that
 	# focus on capture/replay behavior. Tests that need it opt in.
 	config.errors_session_marker_enabled = false
-	# Disable live log capture by default — tests that exercise it set up
+	# Disable live log capture by default, tests that exercise it set up
 	# a fixture log + cursor manually and opt in.
 	config.errors_live_log_capture_enabled = false
 	return config
@@ -163,7 +163,7 @@ func test_session_token_present_only_with_active_analytics_session() -> void:
 
 	errors.configure(config)
 
-	# No session started yet — session_token should be empty.
+	# No session started yet, session_token should be empty.
 	server.enqueue_response("POST", "/v1/errors", 202, "{}")
 	errors.capture_error("NoSessionError", "no session yet")
 	var sent1: Array = []
@@ -173,7 +173,7 @@ func test_session_token_present_only_with_active_analytics_session() -> void:
 	json1.parse(server.requests[-1].body)
 	assert_str(json1.data.context.session_token).is_equal("")
 
-	# Start a session — subsequent errors carry a sess_ token.
+	# Start a session, subsequent errors carry a sess_ token.
 	analytics.start_session()
 	server.enqueue_response("POST", "/v1/errors", 202, "{}")
 	var sent2: Array = []
@@ -238,7 +238,7 @@ func test_replay_previous_crash() -> void:
 
 
 func test_permanent_4xx_dead_letters_and_does_not_retry() -> void:
-	# Server returns 400 (no retry — synchronous fail-fast, permanently rejected).
+	# Server returns 400 (no retry, synchronous fail-fast, permanently rejected).
 	server.enqueue_response("POST", "/v1/errors", 400, "bad")
 
 	errors.configure(_make_config())
@@ -251,7 +251,7 @@ func test_permanent_4xx_dead_letters_and_does_not_retry() -> void:
 	)
 	assert_bool(ok_failed).is_true()
 
-	# A permanently-rejected batch must NOT sit on disk for retry — it would
+	# A permanently-rejected batch must NOT sit on disk for retry, it would
 	# silently wedge all future uploads behind this one poison event.
 	assert_array(FractalPersistenceClass.load_error_queue()).is_empty()
 
@@ -262,7 +262,7 @@ func test_permanent_4xx_dead_letters_and_does_not_retry() -> void:
 
 	# Simulate next session: tear down errors module + spin up a new one
 	# pointed at the same DB. Server would accept anything now (202), but
-	# nothing should be sent — there's nothing left in the retry queue.
+	# nothing should be sent, there's nothing left in the retry queue.
 	errors.queue_free()
 	await get_tree().process_frame
 	server.enqueue_response("POST", "/v1/errors", 202, "{}")
@@ -283,12 +283,12 @@ func test_handle_crash_persists_in_flight_buffer() -> void:
 	# handle_crash() must persist that second error to disk before it's lost.
 	errors.configure(_make_config())
 
-	# No server response enqueued — the first flush stays in-flight indefinitely.
+	# No server response enqueued, the first flush stays in-flight indefinitely.
 	errors.capture_error("InFlightError", "sent but no response yet")
 	# _send_in_flight=true now; second error goes into _buffer.
 	errors.capture_error("BufferedError", "blocked by in-flight")
 
-	# Simulate NOTIFICATION_CRASH — synchronous, no await.
+	# Simulate NOTIFICATION_CRASH, synchronous, no await.
 	errors.handle_crash()
 
 	var queued: Array = FractalPersistenceClass.load_error_queue()
@@ -303,7 +303,7 @@ func test_flush_merges_previously_failed_batch() -> void:
 	errors.configure(_make_config())
 
 	# Simulate a batch left on disk by an earlier transient failure this
-	# session (network/5xx) — _flush() persists the merged batch before POST
+	# session (network/5xx), _flush() persists the merged batch before POST
 	# and only clears it on success, so a still-pending retry looks like this.
 	FractalPersistenceClass.save_error_queue([{
 		"error_type": "OldError", "message": "first attempt", "severity": "error",
@@ -332,7 +332,7 @@ func test_flush_merges_previously_failed_batch() -> void:
 
 
 func test_abnormal_shutdown_inferred_from_unclean_session_marker() -> void:
-	# Pre-seed a session marker that was never marked clean — exactly the
+	# Pre-seed a session marker that was never marked clean, exactly the
 	# state left behind by SIGSEGV / kill -9 / OOM.
 	var marker: FractalSessionMarker = FractalSessionMarkerClass.new()
 	marker.start_new({
@@ -347,7 +347,7 @@ func test_abnormal_shutdown_inferred_from_unclean_session_marker() -> void:
 		{},
 		{},
 	)
-	# Note: NO mark_clean() — simulates abnormal exit.
+	# Note: NO mark_clean(), simulates abnormal exit.
 
 	server.enqueue_response("POST", "/v1/errors", 202, "{}")
 
@@ -506,7 +506,7 @@ func test_feature_gate_402_drops_queue_and_stops_retrying() -> void:
 	assert_array(FractalPersistenceClass.load_error_queue()).is_empty()
 	assert_bool(errors._feature_gated).is_true()
 
-	# A subsequent capture must not POST again — the gate is permanent for the session.
+	# A subsequent capture must not POST again, the gate is permanent for the session.
 	errors.capture_error("SecondGatedError", "also should not be recorded")
 	assert_int(server.requests.size()).is_equal(1)
 

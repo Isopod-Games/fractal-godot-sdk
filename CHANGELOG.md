@@ -13,7 +13,7 @@ follow [Semantic Versioning](https://semver.org/). Tags are pushed as
   `RandomNumberGenerator` alone. Two independent app launches whose
   `randomize()` seeds happened to collide could mint the byte-identical
   session token, which the collector hashes deterministically into
-  `session_id` — merging two genuinely separate playthroughs into one
+  `session_id`, merging two genuinely separate playthroughs into one
   ClickHouse session. A microsecond-precision wall-clock read is now folded
   into the token so a collision requires two launches to occur at the exact
   same microsecond. Found while investigating issue #355 (a fragmented
@@ -23,7 +23,7 @@ follow [Semantic Versioning](https://semver.org/). Tags are pushed as
 
 ### Fixed
 
-- A permanently-rejected analytics batch (4xx other than 429 — e.g. a
+- A permanently-rejected analytics batch (4xx other than 429, e.g. a
   blocked/invalid API key) is now moved to an on-disk dead-letter queue
   (`user://fractal/analytics_dead_letter.json`) and reported via
   `push_error`, instead of being silently dropped with only a
@@ -39,8 +39,8 @@ follow [Semantic Versioning](https://semver.org/). Tags are pushed as
 - Error/crash events (`/v1/errors` batches, `NOTIFICATION_CRASH` reports, and
   native Crashpad minidumps) now carry the same `player_id` as analytics
   events, instead of always shipping an empty string. Errors resolves its
-  own persisted player ID on `configure()` — via a new shared
-  `FractalPersistence.resolve_player_id()` — so attribution works even when
+  own persisted player ID on `configure()`, via a new shared
+  `FractalPersistence.resolve_player_id()`, so attribution works even when
   `analytics_enabled` is false or errors configures first. A new
   `Fractal.errors.set_player_id()` lets games running errors without
   analytics override it. The collector still accepts an empty `player_id`
@@ -53,7 +53,7 @@ follow [Semantic Versioning](https://semver.org/). Tags are pushed as
 ### Fixed
 
 - A batch of errors permanently rejected by the collector (4xx other than
-  402/429 — malformed payload, blocked key, etc.) is no longer retried
+  402/429, malformed payload, blocked key, etc.) is no longer retried
   forever. It's now moved to a local dead-letter file
   (`user://fractal/errors_dead_letter.json`) so one poison event can't
   silently wedge all future error uploads behind it.
@@ -79,7 +79,7 @@ follow [Semantic Versioning](https://semver.org/). Tags are pushed as
   the backend has been fully genre-agnostic since it dropped
   roguelike-specific analytics in favor of the generic `event_aggregate`
   endpoint. Replace each call with the equivalent `track(event_type,
-  payload)` call — see [docs/MIGRATION.md](docs/MIGRATION.md) for the exact
+  payload)` call. See [docs/MIGRATION.md](docs/MIGRATION.md) for the exact
   mapping.
 
 ### Fixed
@@ -107,7 +107,7 @@ follow [Semantic Versioning](https://semver.org/). Tags are pushed as
 
 ## 2.1.0
 
-- Translations sync now uses a key-only URL (`/api/v1/translations/sync`) —
+- Translations sync now uses a key-only URL (`/api/v1/translations/sync`)
   the API key alone identifies your project, so `FractalConfig.project_id`
   is no longer required. The legacy nested URL
   (`/api/v1/projects/:project_id/translations/sync`) still works for
@@ -132,7 +132,7 @@ follow [Semantic Versioning](https://semver.org/). Tags are pushed as
 
 ## 2.0.0
 
-Back-filled baseline entry — this release predates the changelog itself.
+Back-filled baseline entry, this release predates the changelog itself.
 
 - Analytics, error tracking, and translations sync subsystems, each
   independently toggleable via `FractalConfig`.

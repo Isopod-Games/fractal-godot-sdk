@@ -6,8 +6,8 @@ const FractalVersionClass = preload("res://addons/fractal/core/version.gd")
 
 func test_get_platform_returns_known_string() -> void:
 	var platform: String = FractalPlatformDetectorClass.get_platform()
-	# We can't dictate the host OS — assert the string is non-empty + lowercase
-	# (the documented values are all lowercase: windows, macos, linux, steam_deck, …).
+	# We can't dictate the host OS, assert the string is non-empty + lowercase
+	# (the documented values are all lowercase: windows, macos, linux, steam_deck, ...).
 	assert_str(platform).is_not_empty()
 	assert_str(platform).is_equal(platform.to_lower())
 

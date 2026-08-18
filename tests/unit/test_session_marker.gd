@@ -23,7 +23,7 @@ func test_first_launch_returns_empty() -> void:
 func test_start_new_persists_session_with_runtime_block() -> void:
 	var marker: FractalSessionMarker = FractalSessionMarkerClass.new()
 	marker.start_new({"app_version": "1.2.3", "platform": "macos"})
-	# Read it back via a fresh marker instance — proves it's actually on disk.
+	# Read it back via a fresh marker instance, proves it's actually on disk.
 	var fresh: FractalSessionMarker = FractalSessionMarkerClass.new()
 	var loaded: Dictionary = fresh.load_previous()
 	assert_str(loaded.app_version).is_equal("1.2.3")
@@ -84,6 +84,6 @@ func test_corrupt_file_is_dropped_and_treated_as_no_session() -> void:
 	var bad := FileAccess.open(FractalSessionMarkerClass.SESSION_PATH, FileAccess.WRITE)
 	bad.store_string("not json {{{")
 	bad.close()
-	# Corrupt → treated as no previous session AND the bad file is dropped.
+	# Corrupt -> treated as no previous session AND the bad file is dropped.
 	assert_dict(FractalSessionMarkerClass.new().load_previous()).is_empty()
 	assert_bool(FileAccess.file_exists(FractalSessionMarkerClass.SESSION_PATH)).is_false()

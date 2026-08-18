@@ -30,12 +30,12 @@ fractal_host_platform_key() {
 #
 # "Has native source changed since the binaries under
 # addons/fractal_native/bin/<platform_key>/ were last committed, as of
-# <ref>?" Anchoring on the bin/<platform_key> commit — not the last
-# godot-sdk/v* tag — means a --skip-native release can never hide a native
+# <ref>?" Anchoring on the bin/<platform_key> commit, not the last
+# godot-sdk/v* tag, means a --skip-native release can never hide a native
 # change from the next release's detection: a tag-range diff only sees the
 # range since the newest tag, so a change that shipped under --skip-native
 # (no tag movement of its own) falls outside every future tag-range diff and
-# goes undetected forever. Baseline anchoring has no such blind spot — it
+# goes undetected forever. Baseline anchoring has no such blind spot, it
 # always looks back to the actual last-committed binaries, regardless of tag
 # history.
 #
@@ -70,7 +70,7 @@ fractal_native_rebuild_needed() {
 #
 # True iff <candidate> is exactly one semver step ahead of <current>: a
 # major bump (X+1.0.0), a minor bump (X.Y+1.0), or a patch bump (X.Y.Z+1).
-# Guards against typos — e.g. 2.0.0 -> 12.3.0 — sailing through just
+# Guards against typos, e.g. 2.0.0 -> 12.3.0, sailing through just
 # because 12.3.0 sorts higher than 2.0.0.
 fractal_version_increment_ok() {
   local current="$1" candidate="$2"
@@ -93,7 +93,7 @@ fractal_version_increment_ok() {
 # fractal_next_versions <current>
 #
 # Prints the three versions fractal_version_increment_ok would accept for
-# <current> — one per line, major/minor/patch bump in that order. Used to
+# <current>, one per line, major/minor/patch bump in that order. Used to
 # tell the operator what's actually allowed after a rejected version.
 fractal_next_versions() {
   local current="$1"
@@ -107,7 +107,7 @@ fractal_next_versions() {
 # fractal_version_at_ref <ref>
 #
 # Prints sdks/godot/VERSION as it existed at <ref>, whitespace-stripped.
-# Prints nothing (empty string) if the file doesn't exist at <ref> — this is
+# Prints nothing (empty string) if the file doesn't exist at <ref>, this is
 # the bootstrap signal: VERSION/version.gd don't exist on older history, so
 # an empty result means "skip the numeric bump rules, they don't apply yet."
 fractal_version_at_ref() {
@@ -123,7 +123,7 @@ fractal_version_at_ref() {
 fractal_native_binary_version_at_ref() {
   local ref="$1" platform_key="$2"
   git show "$ref:sdks/godot/addons/fractal/core/version.gd" 2>/dev/null \
-    | grep -oP "\"$platform_key\":\s*\"\K[^\"]+" || true
+    | sed -n "s/.*\"$platform_key\"[[:space:]]*:[[:space:]]*\"\([^\"]*\)\".*/\1/p" | head -1
 }
 
 # fractal_freshness_check <base> <head> [host_platform_key]
@@ -133,7 +133,7 @@ fractal_native_binary_version_at_ref() {
 # accumulates ALL violations rather than stopping at the first one, so a
 # single `bin/ci` run surfaces everything that needs fixing at once.
 #
-# <host_platform_key> defaults to fractal_host_platform_key() — the platform
+# <host_platform_key> defaults to fractal_host_platform_key(), the platform
 # actually running this check. Only that platform's native binary is
 # required to be fresh and version-matched; the other two platforms are a
 # non-fatal WARNING when stale, since a developer can only build+verify one
@@ -147,17 +147,17 @@ fractal_native_binary_version_at_ref() {
 # Rule B1 (GDScript bump): shipped SDK source changed but VERSION didn't.
 # Rule B2 (increment sanity): VERSION changed but isn't exactly one semver
 #   step ahead of <base>.
-# Rule B3 (native bump): native source changed — requires VERSION bumped and
+# Rule B3 (native bump): native source changed, requires VERSION bumped and
 #   the host platform's NATIVE_BINARY_VERSIONS entry changed to match the
 #   new VERSION. Fatal for the host platform; a WARNING for the other two.
 # Rule B4 (unexplained binaries): a platform's bin/<key>/ changed with no
-#   matching native source change — unless that platform was already stale
+#   matching native source change, unless that platform was already stale
 #   (catch-up rebuild), which still requires its NATIVE_BINARY_VERSIONS
-#   entry to match VERSION. Always fatal (any platform) — this catches
+#   entry to match VERSION. Always fatal (any platform), this catches
 #   accidental/unexplained commits and doesn't depend on the matrix.
 #
 # The B-rules are skipped entirely (with a logged reason) when VERSION is
-# absent at <base> — "bootstrap mode," i.e. this diff is the one
+# absent at <base>, "bootstrap mode," i.e. this diff is the one
 # introducing VERSION/version.gd to the repo. Rule A still runs.
 fractal_freshness_check() {
   local base="$1" head="$2"
@@ -169,13 +169,13 @@ fractal_freshness_check() {
     if rebuild_needed_output="$(fractal_native_rebuild_needed "$head" "$platform_key")"; then
       if [ "$platform_key" = "$host_platform_key" ]; then
         failed=1
-        echo "FAIL (Rule A — binary staleness, $platform_key): native source changed since addons/fractal_native/bin/$platform_key/ was last committed:"
+        echo "FAIL (Rule A, binary staleness, $platform_key): native source changed since addons/fractal_native/bin/$platform_key/ was last committed:"
         echo "$rebuild_needed_output" | sed 's/^/    /'
-        echo "  Remediation: build locally to catch compile errors cheaply —"
+        echo "  Remediation: build locally to catch compile errors cheaply, "
         echo "    sdks/godot/addons/fractal_native/build/setup.sh <platform> <arch> && (cd sdks/godot/addons/fractal_native && scons platform=<platform> arch=<arch> target=template_release)"
         echo "    or just FRACTAL_BUILD_NATIVE=1 bin/ci, which does this for the current platform."
       else
-        echo "WARN (Rule A — binary staleness, $platform_key): native source changed since addons/fractal_native/bin/$platform_key/ was last committed (not the host platform — not fatal):"
+        echo "WARN (Rule A, binary staleness, $platform_key): native source changed since addons/fractal_native/bin/$platform_key/ was last committed (not the host platform, not fatal):"
         echo "$rebuild_needed_output" | sed 's/^/    /'
         echo "  Remediation (optional, whenever someone is on $platform_key or dispatches the matrix): bin/dispatch_matrix, or build locally on $platform_key and sdks/godot/ci/fetch_native_artifacts.sh."
       fi
@@ -191,7 +191,7 @@ fractal_freshness_check() {
   base_version="$(fractal_version_at_ref "$base")"
 
   if [ -z "$base_version" ]; then
-    echo "fractal_freshness_check: bootstrap mode — VERSION absent at base ($base) — skipping version-bump rules (B1-B4)"
+    echo "fractal_freshness_check: bootstrap mode, VERSION absent at base ($base), skipping version-bump rules (B1-B4)"
     [ "$failed" -eq 0 ] && echo "fractal_freshness_check: OK"
     return "$failed"
   fi
@@ -216,7 +216,7 @@ fractal_freshness_check() {
   # Rule B1
   if [ -n "$shipped_changed" ] && [ "$version_changed" = false ]; then
     failed=1
-    echo "FAIL (Rule B1 — version bump required): shipped SDK source changed but sdks/godot/VERSION did not:"
+    echo "FAIL (Rule B1, version bump required): shipped SDK source changed but sdks/godot/VERSION did not:"
     echo "$shipped_changed" | sed 's/^/    /'
     echo "  Remediation: run sdks/godot/ci/bump_version.sh patch|minor|major"
   fi
@@ -224,7 +224,7 @@ fractal_freshness_check() {
   # Rule B2
   if [ "$version_changed" = true ] && ! fractal_version_increment_ok "$base_version" "$head_version"; then
     failed=1
-    echo "FAIL (Rule B2 — increment sanity): VERSION $base_version -> $head_version is not a single semver step. Allowed next versions:"
+    echo "FAIL (Rule B2, increment sanity): VERSION $base_version -> $head_version is not a single semver step. Allowed next versions:"
     fractal_next_versions "$base_version" | sed 's/^/    /'
   fi
 
@@ -235,7 +235,7 @@ fractal_freshness_check() {
   if [ -n "$native_source_changed" ]; then
     if [ "$version_changed" = false ]; then
       failed=1
-      echo "FAIL (Rule B3 — native bump required): native source changed but sdks/godot/VERSION did not:"
+      echo "FAIL (Rule B3, native bump required): native source changed but sdks/godot/VERSION did not:"
       echo "$native_source_changed" | sed 's/^/    /'
       echo "  Remediation: run sdks/godot/ci/bump_version.sh (native changes are shipped source too), then rebuild and sdks/godot/ci/fetch_native_artifacts.sh (or a local build for your platform)"
     else
@@ -254,17 +254,17 @@ fractal_freshness_check() {
         if [ -n "$reason" ]; then
           if [ "$platform_key" = "$host_platform_key" ]; then
             failed=1
-            echo "FAIL (Rule B3 — native bump required, $platform_key): $reason"
+            echo "FAIL (Rule B3, native bump required, $platform_key): $reason"
             echo "  Remediation: rebuild the native binaries for $platform_key and run sdks/godot/ci/fetch_native_artifacts.sh (or a local build) to set NATIVE_BINARY_VERSIONS[\"$platform_key\"] := VERSION"
           else
-            echo "WARN (Rule B3 — native bump required, $platform_key): $reason (not the host platform — not fatal)"
+            echo "WARN (Rule B3, native bump required, $platform_key): $reason (not the host platform, not fatal)"
           fi
         fi
       done
     fi
   fi
 
-  # Rule B4 — unexplained binaries, evaluated per platform, always fatal
+  # Rule B4, unexplained binaries, evaluated per platform, always fatal
   # regardless of host platform: this is a hygiene check (why did this
   # commit touch a binary at all), independent of the cross-platform matrix.
   if [ -z "$native_source_changed" ]; then
@@ -278,11 +278,11 @@ fractal_freshness_check() {
         head_nbv="$(fractal_native_binary_version_at_ref "$head" "$platform_key")"
         if [ "$head_nbv" != "$head_version" ]; then
           failed=1
-          echo "FAIL (Rule B4 — unexplained binaries, $platform_key): catch-up rebuild of already-stale binaries, but NATIVE_BINARY_VERSIONS entry ($head_nbv) != VERSION ($head_version)"
+          echo "FAIL (Rule B4, unexplained binaries, $platform_key): catch-up rebuild of already-stale binaries, but NATIVE_BINARY_VERSIONS entry ($head_nbv) != VERSION ($head_version)"
         fi
       else
         failed=1
-        echo "FAIL (Rule B4 — unexplained binaries, $platform_key): addons/fractal_native/bin/$platform_key/ changed without a matching native source change:"
+        echo "FAIL (Rule B4, unexplained binaries, $platform_key): addons/fractal_native/bin/$platform_key/ changed without a matching native source change:"
         echo "$bin_changed" | sed 's/^/    /'
       fi
     done

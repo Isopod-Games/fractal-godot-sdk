@@ -29,7 +29,7 @@ func test_event_structure() -> void:
 	var event: Dictionary = pending[0]
 	assert_str(event.event_type).is_equal("level_complete")
 	assert_dict(event.payload).is_equal({"level": 5})
-	# Timestamp is ISO 8601 with ms: "YYYY-MM-DDTHH:MM:SS.sssZ" — 24 chars, ends with Z, parses back.
+	# Timestamp is ISO 8601 with ms: "YYYY-MM-DDTHH:MM:SS.sssZ", 24 chars, ends with Z, parses back.
 	assert_str(event.event_timestamp).has_length(24)
 	assert_str(event.event_timestamp).ends_with("Z")
 	var timestamp_regex := RegEx.new()

@@ -7,7 +7,7 @@ extends SceneTree
 ## Optional env vars:
 ##   FRACTAL_COLLECTOR    defaults to https://collector.getfractal.dev
 ##   FRACTAL_API_URL      defaults to https://getfractal.dev
-##   FRACTAL_PROJECT_ID   numeric project ID (find it in Project Settings → SDK Integration);
+##   FRACTAL_PROJECT_ID   numeric project ID (find it in Project Settings -> SDK Integration);
 ##                        if omitted, translations sync is skipped
 
 var _analytics_done := false
@@ -43,7 +43,7 @@ func _run_test() -> void:
 	_translations_enabled = not project_id.is_empty()
 	_translations_done = not _translations_enabled
 	if not _translations_enabled:
-		print("[Test] FRACTAL_PROJECT_ID not set — skipping translations test")
+		print("[Test] FRACTAL_PROJECT_ID not set, skipping translations test")
 
 	var fractal: Node = root.get_node("Fractal")
 
@@ -119,7 +119,7 @@ func _run_test() -> void:
 
 	# Safety timeout
 	await create_timer(15.0).timeout
-	print("[Test] TIMEOUT — check network/collector")
+	print("[Test] TIMEOUT, check network/collector")
 	quit(1)
 
 

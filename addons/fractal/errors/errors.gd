@@ -1,5 +1,5 @@
 extends Node
-## Errors subsystem — `Fractal.errors`.
+## Errors subsystem, `Fractal.errors`.
 ##
 ## Sentry-like error/crash capture. Public API:
 ##   capture_error(error_type, message, opts)
@@ -9,14 +9,14 @@ extends Node
 ##   set_release(version) / set_environment(env)
 ##
 ## Crash detection layers (each catches things the others can't):
-##   1. NOTIFICATION_CRASH       — explicit OS.crash() and some engine-side
+##   1. NOTIFICATION_CRASH, explicit OS.crash() and some engine-side
 ##                                 fatals. Writes a crash report to disk.
-##   2. Session marker heartbeat — catches *any* abnormal exit (SIGSEGV,
-##                                 OOM, kill -9, Godot panic) by detecting
+##   2. Session marker heartbeat, catches *any* abnormal exit (SIGSEGV,
+##                                 OOM, kill -9. Godot panic) by detecting
 ##                                 a previous session that never marked
 ##                                 itself clean. Best-effort log-scrape
 ##                                 enrichment on next launch.
-##   3. Persistent error queue   — every error is persisted before POST,
+##   3. Persistent error queue, every error is persisted before POST,
 ##                                 so a crash during submission doesn't
 ##                                 lose data. Retried on next launch.
 ##
@@ -57,11 +57,11 @@ var _environment: String = ""
 var _buffer: Array = []
 var _send_in_flight: bool = false
 # Set permanently once the collector returns 402 (plan lacks error_tracking).
-# Stops all further flushes/POSTs for the rest of the session — no retry storm
+# Stops all further flushes/POSTs for the rest of the session, no retry storm
 # against a gate that won't lift until the developer upgrades.
 var _feature_gated: bool = false
 # Drain persisted state at most once per process. Without this, a second
-# configure() call (e.g., AnalyticsGlue → driver re-configure) would re-read
+# configure() call (e.g., AnalyticsGlue -> driver re-configure) would re-read
 # our OWN freshly-written session.json and falsely infer an abnormal shutdown.
 var _drained_once: bool = false
 # True iff the native GDExtension is loaded and armed for native crash capture.
@@ -70,7 +70,7 @@ var _native_armed: bool = false
 # Live log tailing (non-fatal GDScript runtime error auto-capture).
 var _live_capture_enabled: bool = false
 # Guards _init_live_log_capture() to once per process, mirroring _drained_once
-# — a re-configure() must not reset the cursor and lose un-polled content.
+#, a re-configure() must not reset the cursor and lose un-polled content.
 var _live_inited: bool = false
 var _log_path: String = ""
 var _log_cursor: int = -1
@@ -107,7 +107,7 @@ func configure(config: FractalConfigClass) -> void:
 	_environment = config.environment
 	_player_id = FractalPersistenceClass.resolve_player_id()
 
-	# Toggle auto-breadcrumbs on scene change — symmetric so reconfiguring
+	# Toggle auto-breadcrumbs on scene change, symmetric so reconfiguring
 	# from `true` to `false` actually disconnects the listener.
 	var tree := get_tree()
 	if tree:
@@ -118,7 +118,7 @@ func configure(config: FractalConfigClass) -> void:
 			if tree.tree_changed.is_connected(_on_tree_changed):
 				tree.tree_changed.disconnect(_on_tree_changed)
 
-	# Native crash capture (Phase B) — opt-in, no-op if the GDExtension
+	# Native crash capture (Phase B), opt-in, no-op if the GDExtension
 	# isn't installed. Initialized BEFORE _drain_persisted_errors so that
 	# any fresh native breadcrumbs/tags are wired before drain emits any
 	# replays.
@@ -139,7 +139,7 @@ func configure(config: FractalConfigClass) -> void:
 		_session_marker.clear()
 
 	# Heartbeat must run if EITHER the session marker OR live capture is
-	# enabled — they share the same timer (no second timer for live
+	# enabled, they share the same timer (no second timer for live
 	# capture; visibility latency is bounded by errors_heartbeat_interval_s).
 	if config.errors_session_marker_enabled or _live_capture_enabled:
 		var interval: float = max(1.0, config.errors_heartbeat_interval_s)
@@ -182,7 +182,7 @@ func set_analytics(node) -> void:
 	_analytics = node
 
 
-## Overrides the resolved player ID — for games running errors without
+## Overrides the resolved player ID, for games running errors without
 ## analytics that still want to set their own ID.
 func set_player_id(id: String) -> void:
 	if id.is_empty():
@@ -221,7 +221,7 @@ func is_enabled() -> bool:
 # ─── Lifecycle hooks called by the Fractal autoload ──────────────────────
 
 func handle_crash() -> void:
-	# Inside NOTIFICATION_CRASH we have a tiny window — synchronous file I/O only.
+	# Inside NOTIFICATION_CRASH we have a tiny window, synchronous file I/O only.
 	if _config == null:
 		return
 	# Persist any buffered errors blocked by _send_in_flight so they survive
@@ -255,7 +255,7 @@ func mark_clean_shutdown() -> void:
 	if not _enabled:
 		return
 	# Flush the final partial live-capture window so its occurrences aren't
-	# lost. (On a crash the last window may be lost — acceptable, since the
+	# lost. (On a crash the last window may be lost, acceptable, since the
 	# crash itself is covered by the AbnormalShutdown layer.)
 	if _live_capture_enabled:
 		_poll_log_for_errors()
@@ -282,7 +282,7 @@ func _effective_player_id() -> String:
 		return _analytics.get_player_id()
 	if _player_id.is_empty() and not _warned_no_player_id:
 		_warned_no_player_id = true
-		push_error("[Fractal] errors: no player_id could be resolved — shipping an unattributed error batch")
+		push_error("[Fractal] errors: no player_id could be resolved, shipping an unattributed error batch")
 	return _player_id
 
 
@@ -304,13 +304,13 @@ func _metadata_user() -> Dictionary:
 func _drain_persisted_errors() -> void:
 	if not _enabled:
 		return
-	# Re-configure within the same process must not re-drain — otherwise
+	# Re-configure within the same process must not re-drain, otherwise
 	# we'd re-read the session marker we just wrote and falsely infer an
 	# abnormal shutdown for our own active session.
 	if _drained_once:
 		return
 	_drained_once = true
-	# 1. Anything queued but not yet POSTed in a previous session — these
+	# 1. Anything queued but not yet POSTed in a previous session, these
 	#    are pre-built error events in canonical wire shape.
 	var queued: Array = FractalPersistenceClass.load_error_queue()
 	if not queued.is_empty():
@@ -318,7 +318,7 @@ func _drain_persisted_errors() -> void:
 			_buffer.append(e)
 		FractalPersistenceClass.clear_error_queue()
 
-	# 2. Explicit crash via NOTIFICATION_CRASH — old-style crash_report.json.
+	# 2. Explicit crash via NOTIFICATION_CRASH, old-style crash_report.json.
 	var crash_report: Dictionary = FractalPersistenceClass.load_crash_report()
 	if not crash_report.is_empty():
 		FractalPersistenceClass.clear_crash_report()
@@ -340,7 +340,7 @@ func _drain_persisted_errors() -> void:
 			},
 		))
 
-	# 3. Heartbeat-inferred abnormal shutdown — previous session never
+	# 3. Heartbeat-inferred abnormal shutdown, previous session never
 	#    marked itself clean. Skip if NOTIFICATION_CRASH already produced
 	#    an UnhandledCrash above (better data) or if we were never enabled.
 	if _config and _config.errors_session_marker_enabled and crash_report.is_empty():
@@ -478,13 +478,13 @@ func _on_request_completed(_status: int, _headers: PackedStringArray, _body: Str
 func _on_request_failed(error: String, response_code: int = 0) -> void:
 	_send_in_flight = false
 	if response_code == 402:
-		push_error("[Fractal] Error tracking is not included in your plan — errors are NOT being recorded. Upgrade to enable.")
+		push_error("[Fractal] Error tracking is not included in your plan, errors are NOT being recorded. Upgrade to enable.")
 		_feature_gated = true
 		FractalPersistenceClass.clear_error_queue()
 		error_failed.emit(error)
 		return
 	if response_code >= 400 and response_code < 500 and response_code != 429:
-		# Permanently rejected — the collector will never accept this exact
+		# Permanently rejected, the collector will never accept this exact
 		# batch (malformed payload, blocked key, etc.). Retrying it on every
 		# future flush would silently wedge all later uploads behind one
 		# poison event forever, so dead-letter it instead: don't lose the
@@ -495,7 +495,7 @@ func _on_request_failed(error: String, response_code: int = 0) -> void:
 		push_error("[Fractal] Error batch permanently rejected and moved to dead-letter queue: %s" % error)
 		error_failed.emit(error)
 		return
-	# 5xx/429/network — queue stays on disk for the next session to retry.
+	# 5xx/429/network, queue stays on disk for the next session to retry.
 	error_failed.emit(error)
 
 
@@ -520,12 +520,12 @@ func _on_heartbeat() -> void:
 
 ## Locates the active session's log file and records its current EOF as the
 ## tailing cursor. Starting at EOF means we never replay pre-session content
-## — the next-launch AbnormalShutdown scrape (extract_latest_trace) owns that.
+##, the next-launch AbnormalShutdown scrape (extract_latest_trace) owns that.
 func _init_live_log_capture() -> void:
 	if not ProjectSettings.get_setting("debug/file_logging/enable_file_logging", false):
 		push_error(
 			"[Fractal] errors_live_log_capture_enabled is on but ScriptErrors will NOT be captured " +
-			"automatically — enable Project Settings > Debug > File Logging > Enable File Logging " +
+			"automatically, enable Project Settings > Debug > File Logging > Enable File Logging " +
 			"(debug/file_logging/enable_file_logging) to fix this. capture_error() still works without it. " +
 			"See sdks/godot/docs/ERRORS.md#layer-4-live-log-tailing--scripterror"
 		)
@@ -542,7 +542,7 @@ func _init_live_log_capture() -> void:
 
 ## Polls the live log for new error blocks since the last cursor, groups
 ## them by signature, and emits one ScriptError event per signature per
-## poll carrying the per-poll occurrence delta — bounding egress to one
+## poll carrying the per-poll occurrence delta, bounding egress to one
 ## event per signature per heartbeat regardless of how often it fires.
 func _poll_log_for_errors() -> void:
 	if _log_path.is_empty():
@@ -602,7 +602,7 @@ func _arm_native(config: FractalConfigClass) -> void:
 	var reported_version: String = native.get_version() if has_get_version else ""
 	if not FractalVersionClass.native_binary_matches(has_get_version, reported_version):
 		push_error(
-			"Fractal: native extension version %s does not match expected %s — update the entire addons/ folder. Native crash capture disabled; heartbeat crash detection still active." % [
+			"Fractal: native extension version %s does not match expected %s, update the entire addons/ folder. Native crash capture disabled; heartbeat crash detection still active." % [
 				reported_version if has_get_version else "<missing get_version>",
 				FractalVersionClass.native_binary_version_for(FractalVersionClass.current_platform_key()),
 			]
@@ -611,7 +611,7 @@ func _arm_native(config: FractalConfigClass) -> void:
 	if not has_get_version and config.debug:
 		print("[Fractal] arming pre-versioning native binary (predates get_version())")
 	if not helpers.ensure_handler_executable(helpers.handler_path()):
-		push_warning("Fractal: crashpad_handler is not executable and could not be repaired — native crash capture disabled")
+		push_warning("Fractal: crashpad_handler is not executable and could not be repaired, native crash capture disabled")
 		return
 	var ok: bool = native.init(
 		helpers.handler_path(),
@@ -699,7 +699,7 @@ func _upload_minidump(dump_path: String, native) -> void:
 	http.request_failed.connect(func(_e, response_code = 0):
 		if response_code == 402:
 			if not _feature_gated:
-				push_error("[Fractal] Error tracking is not included in your plan — errors are NOT being recorded. Upgrade to enable.")
+				push_error("[Fractal] Error tracking is not included in your plan, errors are NOT being recorded. Upgrade to enable.")
 			_feature_gated = true
 			if Engine.has_singleton("FractalNative"):
 				native.delete_minidump(dump_path)

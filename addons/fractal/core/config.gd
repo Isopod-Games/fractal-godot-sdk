@@ -12,7 +12,7 @@ extends Resource
 @export var api_key: String = ""
 
 ## DEPRECATED: no longer required. The translations sync endpoint is
-## key-only — the API key alone identifies your project. Kept for resource
+## key-only, the API key alone identifies your project. Kept for resource
 ## back-compat with existing .tres files; safe to leave blank or remove.
 @export var project_id: String = ""
 
@@ -54,7 +54,7 @@ extends Resource
 ## How often the heartbeat refreshes the session marker (seconds).
 ## Lower = tighter "last alive" timestamp, slightly more disk I/O.
 @export var errors_heartbeat_interval_s: float = 10.0
-## Phase B placeholder — when a `FractalNative` GDExtension is bundled,
+## Phase B placeholder, when a `FractalNative` GDExtension is bundled,
 ## flip this to capture true minidumps for native crashes (SIGSEGV etc.).
 @export var errors_native_enabled: bool = false
 ## Tail the current session's Godot log on the heartbeat and auto-report

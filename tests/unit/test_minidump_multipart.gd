@@ -1,6 +1,6 @@
 extends GdUnitTestSuite
 ## Validates the multipart body construction in errors.gd::_build_multipart_body.
-## This is the wire format for POST /v1/minidumps — a regression here would
+## This is the wire format for POST /v1/minidumps, a regression here would
 ## silently break native crash uploads.
 
 const FractalErrorsClass = preload("res://addons/fractal/errors/errors.gd")
@@ -20,7 +20,7 @@ func after_test() -> void:
 
 
 func _make_dump_bytes() -> PackedByteArray:
-	# Minidumps start with the magic "MDMP" — fake one for the parser test.
+	# Minidumps start with the magic "MDMP", fake one for the parser test.
 	return PackedByteArray([0x4d, 0x44, 0x4d, 0x50, 0x93, 0xa7, 0x00, 0x00, 0x01, 0x02, 0x03, 0x04])
 
 
@@ -74,7 +74,7 @@ func test_multipart_metadata_is_valid_json() -> void:
 		"B", "/x.dmp", _make_dump_bytes(), meta,
 	)
 	var s: String = body.get_string_from_utf8()
-	# Find the start of the metadata payload — after the empty line that
+	# Find the start of the metadata payload, after the empty line that
 	# separates headers from body inside that part.
 	var meta_header_idx: int = s.find('name="metadata"')
 	var body_start: int = s.find("\r\n\r\n", meta_header_idx) + 4
@@ -92,7 +92,7 @@ func test_multipart_metadata_is_valid_json() -> void:
 
 func test_multipart_dump_bytes_round_trip_intact() -> void:
 	# Embed a binary pattern that includes \r\n. The multipart parser on
-	# the server side uses the boundary to split — bytes within a part
+	# the server side uses the boundary to split, bytes within a part
 	# must NOT be mangled.
 	var dump_bytes := PackedByteArray([0x00, 0x0d, 0x0a, 0xff, 0x00, 0x4d, 0x44, 0x4d, 0x50])
 	var body: PackedByteArray = errors._build_multipart_body(

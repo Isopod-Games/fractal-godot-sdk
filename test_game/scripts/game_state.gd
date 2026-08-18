@@ -1,5 +1,5 @@
 extends Node
-## Click Empire game state — coins, upgrades, and achievement tracking.
+## Click Empire game state, coins, upgrades, and achievement tracking.
 ##
 ## NOT given a class_name to avoid colliding with SDK class_names.
 ## Loaded as the `GameState` autoload (registered in project.godot).

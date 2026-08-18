@@ -1,8 +1,8 @@
-## Fractal Native — GDScript-side helpers around the FractalNative GDExtension.
+## Fractal Native, GDScript-side helpers around the FractalNative GDExtension.
 ##
 ## The real implementation is the C++ singleton registered as `FractalNative`.
 ## This file is a thin convenience layer that:
-##   1. Detects whether the GDExtension is available (it might not be — the
+##   1. Detects whether the GDExtension is available (it might not be, the
 ##      addon ships with binaries for {macos,linux,windows} x x86_64/arm64
 ##      but not every platform combo, and pure-GDScript Fractal still works
 ##      without it).
@@ -40,7 +40,7 @@ static func handler_path() -> String:
 			return ""
 
 	# ProjectSettings.globalize_path resolves res:// to the absolute fs path
-	# at runtime — sentry-native needs an absolute path to the handler.
+	# at runtime, sentry-native needs an absolute path to the handler.
 	var rel: String = "res://addons/fractal_native/bin/%s/%s" % [platform_dir, bin_name]
 	return ProjectSettings.globalize_path(rel)
 
@@ -57,7 +57,7 @@ static func database_path() -> String:
 ## Ensures the crashpad_handler at `handler` has the owner-exec bit set,
 ## repairing existing installs whose zip predates the exec-bit fix in the
 ## SDK download endpoint. Returns true if the handler is (now) executable,
-## false if it couldn't be made so — callers must not arm native capture
+## false if it couldn't be made so, callers must not arm native capture
 ## on a false result (see errors.gd `_arm_native`).
 ##
 ## Windows has no unix exec-bit concept, so this is a no-op there.

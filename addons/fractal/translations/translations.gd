@@ -1,5 +1,5 @@
 extends Node
-## Translations subsystem — `Fractal.translations`.
+## Translations subsystem, `Fractal.translations`.
 ##
 ## Pulls translations from the Fractal API at runtime and registers them with
 ## Godot's TranslationServer. Bundled `.translation` files remain the offline
@@ -50,7 +50,7 @@ func configure(config: FractalConfigClass) -> void:
 
 	if not config.project_id.is_empty() and not _warned_project_id_deprecated:
 		_warned_project_id_deprecated = true
-		push_warning("Fractal.translations: config.project_id is deprecated and no longer used — the API key alone identifies your project. Safe to remove from your config.")
+		push_warning("Fractal.translations: config.project_id is deprecated and no longer used, the API key alone identifies your project. Safe to remove from your config.")
 
 	# Load any cached translations from a previous session up-front so the UI
 	# isn't waiting on the network for first paint.
@@ -139,7 +139,7 @@ func _on_request_completed(status: int, response_headers: PackedStringArray, bod
 	if status == 304:
 		var cached: Dictionary = FractalPersistenceClass.load_translation_cache(locale)
 		if cached.is_empty():
-			# We have an ETag but no cache — recover by clearing the ETag and re-fetching.
+			# We have an ETag but no cache, recover by clearing the ETag and re-fetching.
 			FractalPersistenceClass.save_translation_etag(locale, "")
 			sync_failed.emit(locale, "cache missing for 304 response")
 			return

@@ -1,5 +1,5 @@
 extends Control
-## Shop scene — buy upgrades with coins. Each purchase fires analytics.
+## Shop scene, buy upgrades with coins. Each purchase fires analytics.
 
 const CLICKER_SCENE := "res://test_game/scenes/clicker.tscn"
 

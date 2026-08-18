@@ -4,8 +4,8 @@
 # job). Run locally once, after that job has merged, with `gh` authed
 # against an account that can push releases to isopod-fractal-analytics/godot-sdk.
 #
-# For each tag, builds the zip with *this* checkout's (HEAD's) ZipBuilder —
-# not the tag's own controller code — pointed at a worktree of that tag, so
+# For each tag, builds the zip with *this* checkout's (HEAD's) ZipBuilder
+# not the tag's own controller code, pointed at a worktree of that tag, so
 # the backfilled assets get today's bugfixes (unix-perms preservation, entry
 # naming) rather than reproducing old bugs. The one thing that DOES vary per
 # tag is the shipped-files allowlist: v2.x tags shipped the whole addons/
@@ -21,7 +21,7 @@ REPO="isopod-fractal-analytics/godot-sdk"
 
 cd "$ROOT_DIR"
 
-# tag:globs — globs is "default" to use GodotSdk::ZipBuilder::SHIPPED_ADDON_GLOBS,
+# tag:globs, globs is "default" to use GodotSdk::ZipBuilder::SHIPPED_ADDON_GLOBS,
 # or a Ruby array literal to override.
 TAGS=(
   "godot-sdk/v2.0.0:2.0.0:whole_tree"
@@ -37,7 +37,7 @@ for entry in "${TAGS[@]}"; do
   ASSET="fractal-analytics-godot-$VERSION.zip"
 
   if gh release view "$RELEASE_TAG" -R "$REPO" > /dev/null 2>&1; then
-    echo "== $RELEASE_TAG already released — skipping =="
+    echo "== $RELEASE_TAG already released, skipping =="
     continue
   fi
 

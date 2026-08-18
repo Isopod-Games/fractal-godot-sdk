@@ -1,6 +1,6 @@
 extends GdUnitTestSuite
 ## Validates errors.gd::_init_live_log_capture's handling of the
-## debug/file_logging/enable_file_logging prerequisite — regression coverage
+## debug/file_logging/enable_file_logging prerequisite, regression coverage
 ## for upgrading the local push_warning to an actionable push_error.
 
 const FractalErrorsClass = preload("res://addons/fractal/errors/errors.gd")
@@ -29,7 +29,7 @@ func test_push_error_and_disables_capture_when_file_logging_off() -> void:
 	await assert_error(func(): errors._init_live_log_capture()) \
 		.is_push_error(
 			"[Fractal] errors_live_log_capture_enabled is on but ScriptErrors will NOT be captured " +
-			"automatically — enable Project Settings > Debug > File Logging > Enable File Logging " +
+			"automatically, enable Project Settings > Debug > File Logging > Enable File Logging " +
 			"(debug/file_logging/enable_file_logging) to fix this. capture_error() still works without it. " +
 			"See sdks/godot/docs/ERRORS.md#layer-4-live-log-tailing--scripterror"
 		)

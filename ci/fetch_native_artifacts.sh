@@ -2,10 +2,10 @@
 # Downloads the three per-platform native_build.yml artifacts for the
 # current branch's latest successful run, stages them into
 # addons/fractal_native/bin/<target>/, and bumps each platform's
-# NATIVE_BINARY_VERSIONS entry to match VERSION. Never commits — prints the
+# NATIVE_BINARY_VERSIONS entry to match VERSION. Never commits, prints the
 # suggested `git add`/`git commit` for the developer to run themselves.
 #
-# The cross-platform matrix (native_build.yml) is optional now — a local
+# The cross-platform matrix (native_build.yml) is optional now, a local
 # build (build_local.sh) is sufficient for the platform you're on. Use this
 # script when you want to backfill the other two platforms' binaries too
 # (e.g. before a release), not as a required step for every native change.
@@ -40,15 +40,15 @@ while [ "$#" -gt 0 ]; do
   esac
 done
 
-gh auth status > /dev/null 2>&1 || fail "gh is not authenticated — run 'gh auth login'"
+gh auth status > /dev/null 2>&1 || fail "gh is not authenticated, run 'gh auth login'"
 
 if [ -z "$RUN_ID" ]; then
   BRANCH="$(git branch --show-current)"
-  [ -n "$BRANCH" ] || fail "detached HEAD — pass --run-id explicitly"
+  [ -n "$BRANCH" ] || fail "detached HEAD, pass --run-id explicitly"
 
   RUN_ID="$(gh run list --workflow=native_build.yml --branch "$BRANCH" \
     --status success --limit 1 --json databaseId -q '.[0].databaseId' 2>/dev/null || true)"
-  [ -n "$RUN_ID" ] || fail "no successful native_build.yml run found for branch '$BRANCH' — push and let it run first, or pass --run-id"
+  [ -n "$RUN_ID" ] || fail "no successful native_build.yml run found for branch '$BRANCH', push and let it run first, or pass --run-id"
 fi
 
 RUN_SHA="$(gh run view "$RUN_ID" --json headSha -q '.headSha' 2>/dev/null || true)"
@@ -64,7 +64,7 @@ fi
 NATIVE_CHANGED_SINCE_RUN="$(git diff --name-only "$RUN_SHA..HEAD" 2>/dev/null | grep -E "$FRACTAL_NATIVE_PATHS_REGEX" || true)"
 if [ -n "$NATIVE_CHANGED_SINCE_RUN" ]; then
   {
-    echo "run #$RUN_ID's binaries are stale — native source changed since it built:"
+    echo "run #$RUN_ID's binaries are stale, native source changed since it built:"
     echo "$NATIVE_CHANGED_SINCE_RUN" | sed 's/^/    /'
     echo "Bump first, push, let native_build.yml rebuild, then fetch."
   } >&2

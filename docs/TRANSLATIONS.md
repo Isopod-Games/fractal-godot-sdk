@@ -1,4 +1,4 @@
-# Translations — `Fractal.translations`
+# Translations, `Fractal.translations`
 
 Pulls approved translations from Fractal at runtime and registers them with Godot's `TranslationServer`. Bundled `.translation` files remain the offline fallback. Disabled subsystem = silent no-op.
 
@@ -34,12 +34,12 @@ signal language_changed(locale: String)
 ## Sync flow per locale
 
 1. Read the stored ETag from `user://fractal/translations_etags.cfg`.
-2. Issue `GET {api_url}/api/v1/translations/sync?locale={locale}` with `X-API-Key` and (if present) `If-None-Match: <stored_etag>`. The API key alone identifies your project — no `project_id` needed.
+2. Issue `GET {api_url}/api/v1/translations/sync?locale={locale}` with `X-API-Key` and (if present) `If-None-Match: <stored_etag>`. The API key alone identifies your project, no `project_id` needed.
 3. **`200 OK`**: parse the response, save translations to `user://fractal/translations/{locale}.json`, save the new ETag, and register a `Translation` resource with `TranslationServer.add_translation(...)`. `sync_succeeded` fires.
 4. **`304 Not Modified`**: load `user://fractal/translations/{locale}.json` from cache and apply it. `sync_succeeded` fires.
 5. **HTTP error or no network**: load the cached version (if any) and apply it. `sync_failed` fires. Bundled `.translation` files continue to resolve through `TranslationServer`'s lookup chain.
 
-If the cache is corrupt (invalid JSON), the loader deletes it and treats this as an empty cache — the next successful sync repopulates it.
+If the cache is corrupt (invalid JSON), the loader deletes it and treats this as an empty cache, the next successful sync repopulates it.
 
 ## Endpoint shape
 
@@ -53,7 +53,7 @@ The Rails endpoint at `GET /api/v1/translations/sync?locale=es` returns:
 }
 ```
 
-Only translations with `status: "approved"` are included. The ETag is a SHA1 of `(translation_id, updated_at)` pairs — it changes whenever any approved translation in the locale is updated.
+Only translations with `status: "approved"` are included. The ETag is a SHA1 of `(translation_id, updated_at)` pairs, it changes whenever any approved translation in the locale is updated.
 
 ## Composing with bundled translations
 
@@ -64,7 +64,7 @@ Only translations with `status: "approved"` are included. The ETag is a SHA1 of 
 - If Fractal has a key your bundled file doesn't, it just works.
 - If Fractal lacks a key your bundled file has, the bundled value is used (no fallback gymnastics needed).
 
-The loader stores a reference to each Translation it registers so re-syncing the same locale removes the stale version before applying the new one — preventing "stale key from a previous sync" leaks.
+The loader stores a reference to each Translation it registers so re-syncing the same locale removes the stale version before applying the new one, preventing "stale key from a previous sync" leaks.
 
 ## Recommended config
 
@@ -86,4 +86,4 @@ Fractal.configure({
 
 ## Manual seed (no editor CSV import required)
 
-If you don't want to depend on Godot's CSV importer (e.g., for headless smoke runs), you can seed `TranslationServer` directly from a CSV. The test_game's `analytics_glue.gd` does this — see [`test_game/scripts/analytics_glue.gd`](../test_game/scripts/analytics_glue.gd) for a 30-line reference implementation.
+If you don't want to depend on Godot's CSV importer (e.g., for headless smoke runs), you can seed `TranslationServer` directly from a CSV. The test_game's `analytics_glue.gd` does this. See [`test_game/scripts/analytics_glue.gd`](../test_game/scripts/analytics_glue.gd) for a 30-line reference implementation.

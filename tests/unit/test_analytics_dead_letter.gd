@@ -4,7 +4,7 @@ extends GdUnitTestSuite
 ## be moved to the dead-letter queue and cleared from the retry queue, while
 ## 5xx/network failures must keep the current retry-next-session behavior.
 ##
-## Mirrors tests/unit/test_errors_dead_letter.gd — see issue #336/#337.
+## Mirrors tests/unit/test_errors_dead_letter.gd. See issue #336/#337.
 
 const FractalAnalyticsClass = preload("res://addons/fractal/analytics/analytics.gd")
 const FractalPersistenceClass = preload("res://addons/fractal/core/persistence.gd")

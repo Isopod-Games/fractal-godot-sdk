@@ -3,7 +3,7 @@
 # Called by bin/ci when FRACTAL_BUILD_NATIVE=1 is set.
 #
 # On success, bumps this platform's entry in version.gd's
-# NATIVE_BINARY_VERSIONS to the current VERSION — this is the mechanism that
+# NATIVE_BINARY_VERSIONS to the current VERSION, this is the mechanism that
 # satisfies check_sdk_freshness.sh's staleness/version-bump rules for the
 # host platform. The other two platforms are untouched; they're not built
 # here (see bin/dispatch_matrix for backfilling them via the GH Actions
@@ -50,7 +50,7 @@ do
     else
       cp "$candidate" "bin/${PLATFORM}-${ARCH}/"
       chmod +x "$dest" 2>/dev/null || true
-      echo "Copied $(basename "$candidate") → bin/${PLATFORM}-${ARCH}/"
+      echo "Copied $(basename "$candidate") -> bin/${PLATFORM}-${ARCH}/"
     fi
     break
   fi
@@ -104,7 +104,7 @@ PYEOF
 
 # Bump this platform's NATIVE_BINARY_VERSIONS entry to the current VERSION.
 # This is what makes a local build sufficient for check_sdk_freshness.sh's
-# Rule A/B3 on the host platform — no GH Actions matrix required. The other
+# Rule A/B3 on the host platform, no GH Actions matrix required. The other
 # two platforms' entries are left untouched; they're not verifiable here.
 VERSION_GD="$ADDON_DIR/../fractal/core/version.gd"
 SDK_VERSION="$(tr -d '[:space:]' < "$ADDON_DIR/../../VERSION")"

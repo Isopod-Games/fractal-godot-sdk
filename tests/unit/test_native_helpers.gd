@@ -1,6 +1,6 @@
 extends GdUnitTestSuite
 ## Tests for the GDScript-side helpers around the FractalNative GDExtension.
-## We don't actually invoke the C++ binding here — the unit tests run on
+## We don't actually invoke the C++ binding here, the unit tests run on
 ## platforms where the binary may not be shipped. We exercise the path
 ## resolution + availability-check logic, which is platform-agnostic.
 
@@ -9,11 +9,11 @@ const FractalNativeHelpers = preload("res://addons/fractal_native/fractal_native
 
 func test_handler_path_returns_absolute_path() -> void:
 	# Per-platform path returned should be an absolute filesystem path
-	# (globalize_path res:// → user's project dir + addons/...). On
+	# (globalize_path res:// -> user's project dir + addons/...). On
 	# unsupported OSes the helper returns "".
 	var path: String = FractalNativeHelpers.handler_path()
 	if path.is_empty():
-		# Unsupported platform — that's OK, tested via is_available below.
+		# Unsupported platform, that's OK, tested via is_available below.
 		return
 	assert_str(path).contains("addons/fractal_native/bin/")
 	assert_str(path).contains("crashpad_handler")
@@ -31,7 +31,7 @@ func test_database_path_creates_directory() -> void:
 
 func test_ensure_handler_executable_repairs_stripped_bit() -> void:
 	if OS.get_name() == "Windows":
-		# No unix exec-bit concept on Windows — helper is a no-op true.
+		# No unix exec-bit concept on Windows, helper is a no-op true.
 		assert_bool(FractalNativeHelpers.ensure_handler_executable("C:\\nonexistent.exe")).is_true()
 		return
 

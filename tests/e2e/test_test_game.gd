@@ -2,17 +2,17 @@ extends GdUnitTestSuite
 ## End-to-end test: load the clicker scene, exercise core flows, and assert
 ## that the SDK observes the right events.
 ##
-## We don't reach a real backend — the autoload `Fractal` is configured with
+## We don't reach a real backend, the autoload `Fractal` is configured with
 ## `http://localhost:8080` (unreachable in CI). Tracked events will queue and
 ## fire `event_tracked` regardless of HTTP success, which is enough to verify
-## the wiring between game code → AnalyticsGlue → Fractal.analytics.
+## the wiring between game code -> AnalyticsGlue -> Fractal.analytics.
 
 const FractalTestHelpersClass = preload("res://tests/helpers/test_helpers.gd")
 
 
 func before_test() -> void:
 	# Ensure Fractal is configured (the autoload's configure call is triggered by
-	# the test_game's AnalyticsGlue when the scene loads — but if the test runs in
+	# the test_game's AnalyticsGlue when the scene loads, but if the test runs in
 	# isolation the autoload may not have run yet).
 	pass
 

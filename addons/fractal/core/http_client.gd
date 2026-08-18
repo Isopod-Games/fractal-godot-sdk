@@ -53,7 +53,7 @@ func request(method: int, url: String, extra_headers: PackedStringArray = Packed
 	if _api_key.is_empty():
 		request_failed.emit("API key not configured", 0)
 		return
-	# Cancel any in-flight retry from a previous request — without this, a
+	# Cancel any in-flight retry from a previous request, without this, a
 	# pending retry timer would later fire `_send()` with the new request's
 	# payload, duplicating the new batch.
 	if _retry_timer:
@@ -104,7 +104,7 @@ func _on_request_completed(result: int, response_code: int, response_headers: Pa
 		_handle_error("Request failed with result: %d" % result, _pending_retry)
 		return
 
-	# Treat 2xx and 304 (Not Modified) as success — the latter matters for translations sync.
+	# Treat 2xx and 304 (Not Modified) as success, the latter matters for translations sync.
 	if (response_code >= 200 and response_code < 300) or response_code == 304:
 		var body_text := body.get_string_from_utf8()
 		if _debug:
@@ -117,7 +117,7 @@ func _on_request_completed(result: int, response_code: int, response_headers: Pa
 		_handle_error("Server error: %d" % response_code, _pending_retry)
 		return
 
-	# 4xx (other than 429) — don't retry, report failure with the body for debugging.
+	# 4xx (other than 429), don't retry, report failure with the body for debugging.
 	var body_text := body.get_string_from_utf8()
 	if _debug:
 		print("[Fractal] %d %s: %s" % [response_code, _pending_url, body_text])

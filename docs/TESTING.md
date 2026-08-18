@@ -2,9 +2,9 @@
 
 Tests live under `tests/` and run against vendored gdUnit4 (`addons/gdUnit4/`). The suite is split into three tiers:
 
-- **`tests/unit/`** — fast, no I/O. Cover individual classes (event queue, persistence, breadcrumbs, config, platform detection, translation loader).
-- **`tests/integration/`** — spin up an in-process HTTP mock server (`tests/integration/mock_server.gd`) and exercise full subsystem flows: analytics batch posting, error capture, translations sync with ETag/304/cache-fallback paths.
-- **`tests/e2e/`** — load the test game scenes via gdUnit4's `scene_runner`, simulate button presses, assert the SDK observed the right events.
+- **`tests/unit/`**: fast, no I/O. Cover individual classes (event queue, persistence, breadcrumbs, config, platform detection, translation loader).
+- **`tests/integration/`**: spin up an in-process HTTP mock server (`tests/integration/mock_server.gd`) and exercise full subsystem flows: analytics batch posting, error capture, translations sync with ETag/304/cache-fallback paths.
+- **`tests/e2e/`**: load the test game scenes via gdUnit4's `scene_runner`, simulate button presses, assert the SDK observed the right events.
 
 ## Running locally
 
@@ -52,11 +52,11 @@ server.enqueue_response("POST", "/v1/batch", 202, "{}")
 # Inspect `server.requests` to assert what was sent.
 ```
 
-It's not a general-purpose server — it parses one request per connection, sends a pre-canned response, and uses `put_partial_data` + a deferred disconnect so Godot's `HTTPRequest` cleanly reads the response before the socket closes. Keep its scope minimal.
+It's not a general-purpose server, it parses one request per connection, sends a pre-canned response, and uses `put_partial_data` + a deferred disconnect so Godot's `HTTPRequest` cleanly reads the response before the socket closes. Keep its scope minimal.
 
 ## A gotcha: signals + gdUnit4's `assert_signal`
 
-We observed that gdUnit4 v6.1.3's `assert_signal(...).is_emitted(...)` can miss signals emitted from synchronously-chained callbacks (e.g., `HTTPRequest.request_completed` → analytics's `_on_request_completed` → `batch_sent.emit`). The integration tests connect directly to the signal and poll an array instead:
+We observed that gdUnit4 v6.1.3's `assert_signal(...).is_emitted(...)` can miss signals emitted from synchronously-chained callbacks (e.g., `HTTPRequest.request_completed` -> analytics's `_on_request_completed` -> `batch_sent.emit`). The integration tests connect directly to the signal and poll an array instead:
 
 ```gdscript
 var results: Array = []
@@ -91,7 +91,7 @@ Backend Go tests cover the minidump endpoint, the symbol upload endpoint, and th
 | `crash` | Configures the SDK with the session marker enabled, writes one breadcrumb, then `OS.kill(OS.get_process_id())`. Process exits with SIGKILL leaving an unclean `session.json`. CI's next step asserts `clean: false` is in the marker file. |
 | `verify_replay` | Fresh process. `configure()` finds the unclean marker from the previous pass, emits an `AbnormalShutdown` event to `/v1/errors`, asserts via `error_sent` that the POST landed, exits 0. |
 
-`run_e2e.sh` chains `normal → crash → verify_replay` and finishes by querying ClickHouse for `count() FROM error_events WHERE error_type = 'AbnormalShutdown' AND player_id_str = 'ci_drive_player' >= 1` — catching any regression in the heartbeat, replay, or player-attribution paths.
+`run_e2e.sh` chains `normal -> crash -> verify_replay` and finishes by querying ClickHouse for `count() FROM error_events WHERE error_type = 'AbnormalShutdown' AND player_id_str = 'ci_drive_player' >= 1`, catching any regression in the heartbeat, replay, or player-attribution paths.
 
 ## Backend specs
 

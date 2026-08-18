@@ -153,7 +153,7 @@ func test_extract_new_blocks_rotation_resets_cursor() -> void:
 func test_extract_new_blocks_defers_block_clipped_by_cap() -> void:
 	# A preceding line so the block's marker does NOT sit at offset 0 of
 	# the read window (offset 0 is the degenerate "single block fills the
-	# whole window" case, which is handled differently — see the off > 0
+	# whole window" case, which is handled differently. See the off > 0
 	# guard in extract_new_blocks).
 	var prefix := "Godot Engine v4.5\n"
 	# Marker plus a couple of continuation lines, all within a small forced
@@ -168,14 +168,14 @@ func test_extract_new_blocks_defers_block_clipped_by_cap() -> void:
 	var small_cap: int = (prefix + clipped_block).length() - 10
 
 	var r: Dictionary = FractalLogScraperClass.extract_new_blocks(path, 0, small_cap)
-	# The clipped block must NOT be emitted this poll — emitting it would
+	# The clipped block must NOT be emitted this poll, emitting it would
 	# mean a silently truncated stack trace.
 	assert_array(r["blocks"]).is_empty()
 	# Cursor must not have advanced past the block's marker, so the whole
 	# block is re-read in full next poll.
 	assert_int(r["cursor"]).is_equal(prefix.to_utf8_buffer().size())
 
-	# Poll again with the default (large) cap — now the whole file is
+	# Poll again with the default (large) cap, now the whole file is
 	# visible, so the full stack trace must land in a single block, not
 	# split or dropped.
 	var r2: Dictionary = FractalLogScraperClass.extract_new_blocks(path, r["cursor"])
@@ -192,7 +192,7 @@ func test_extract_new_blocks_partial_line_not_consumed() -> void:
 	var path: String = _write_log("partial.log", "SCRIPT ERROR: complete\n          at: a (res://a.gd:1)\n")
 	var file := FileAccess.open(path, FileAccess.READ_WRITE)
 	file.seek_end()
-	# Append a line with NO trailing newline — simulates a half-flushed write.
+	# Append a line with NO trailing newline, simulates a half-flushed write.
 	file.store_string("ERROR: incomplete line with no newline yet")
 	file.close()
 

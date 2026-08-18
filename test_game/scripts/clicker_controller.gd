@@ -1,5 +1,5 @@
 extends Control
-## Core gameplay scene — TAP button, counters, milestones, and auto-tap timer.
+## Core gameplay scene, TAP button, counters, milestones, and auto-tap timer.
 
 const MENU_SCENE := "res://test_game/scenes/main_menu.tscn"
 const SHOP_SCENE := "res://test_game/scenes/shop.tscn"

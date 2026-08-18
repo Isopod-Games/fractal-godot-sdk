@@ -1,5 +1,5 @@
 extends Control
-## Achievements list — translated names + locked/unlocked indicator per row.
+## Achievements list, translated names + locked/unlocked indicator per row.
 
 const CLICKER_SCENE := "res://test_game/scenes/clicker.tscn"
 

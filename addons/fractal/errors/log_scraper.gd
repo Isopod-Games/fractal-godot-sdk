@@ -4,7 +4,7 @@ extends RefCounted
 ##
 ## Used to enrich a synthetic AbnormalShutdown event with whatever Godot
 ## flushed to disk before dying. Quietly returns "" if nothing useful is
-## found — the synthetic event is still emitted with breadcrumbs from the
+## found, the synthetic event is still emitted with breadcrumbs from the
 ## session marker.
 ##
 ## Cross-engine note: this implementation is Godot-specific (parses
@@ -73,7 +73,7 @@ static func extract_trace_from_file(path: String) -> String:
 	if file == null:
 		return ""
 	var size: int = file.get_length()
-	# For large logs, jump to the tail — recent errors live there.
+	# For large logs, jump to the tail, recent errors live there.
 	if size > MAX_READ_BYTES:
 		file.seek(size - MAX_READ_BYTES)
 	var text := file.get_as_text()
@@ -96,7 +96,7 @@ static func extract_new_blocks(path: String, cursor: int, max_poll_bytes: int = 
 	var size: int = file.get_length()
 
 	var start: int = cursor
-	# Log rotated/truncated (or recreated smaller) — restart from scratch.
+	# Log rotated/truncated (or recreated smaller), restart from scratch.
 	if start > size or start < 0:
 		start = 0
 
@@ -113,7 +113,7 @@ static func extract_new_blocks(path: String, cursor: int, max_poll_bytes: int = 
 
 	# Advance the cursor only past the last complete line in the bytes we
 	# actually read. This handles a half-flushed final line (Godot writes
-	# concurrently) and a capped read landing mid-line — the remainder is
+	# concurrently) and a capped read landing mid-line, the remainder is
 	# read on the next poll. If there's no newline at all, don't advance.
 	var last_newline: int = text.rfind("\n")
 	if last_newline < 0:
@@ -127,8 +127,8 @@ static func extract_new_blocks(path: String, cursor: int, max_poll_bytes: int = 
 
 	# If the read was byte-capped AND the trailing block ran to the end of
 	# the window with no terminator, it may just be missing its tail (the
-	# rest hasn't been polled yet). Defer it — drop it from this poll's
-	# result and rewind the cursor to its marker — so it's re-read whole
+	# rest hasn't been polled yet). Defer it, drop it from this poll's
+	# result and rewind the cursor to its marker, so it's re-read whole
 	# next poll instead of being silently truncated. `off > 0` guards
 	# against the degenerate case of a single unterminated block filling
 	# the entire window (a >1MB single stack trace, effectively
@@ -140,7 +140,7 @@ static func extract_new_blocks(path: String, cursor: int, max_poll_bytes: int = 
 		new_cursor = start + complete_text.substr(0, off).to_utf8_buffer().size()
 
 	# Note: when off >= 0 but more_pending is false (we've read to true EOF),
-	# the trailing block is NOT deferred — it's assumed complete. This relies
+	# the trailing block is NOT deferred, it's assumed complete. This relies
 	# on Godot writing an error's marker + full stack trace in one flush, so a
 	# write split exactly at a line boundary mid-trace could in theory still
 	# surface a truncated block. Same assumption the MAX_TRACE_BYTES cap above
@@ -160,7 +160,7 @@ static func extract_new_blocks(path: String, cursor: int, max_poll_bytes: int = 
 ## trailing block's marker line iff that block ran all the way to the end
 ## of `text` with no non-indented terminator line (i.e. it may be missing
 ## its tail because `text` was cut off, not because the block actually
-## ended) — only the last block in `text` can satisfy this. Otherwise -1.
+## ended), only the last block in `text` can satisfy this. Otherwise -1.
 static func _extract_live_blocks(text: String) -> Dictionary:
 	var blocks: Array[String] = []
 	if text.is_empty():
@@ -229,7 +229,7 @@ static func _extract_last_error_block(text: String) -> String:
 		block_lines.append(lines[i])
 	var block: String = "\n".join(block_lines)
 	if block.length() > MAX_TRACE_BYTES:
-		# Keep the head of the block (the actual error line) — the
+		# Keep the head of the block (the actual error line), the
 		# back-trace tail is less important than identifying the error.
 		block = block.substr(0, MAX_TRACE_BYTES)
 	return block

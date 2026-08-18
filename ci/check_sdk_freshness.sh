@@ -14,7 +14,7 @@ fail() {
 }
 
 if ! git -C "$REPO_ROOT" rev-parse --is-inside-work-tree > /dev/null 2>&1; then
-  echo "check_sdk_freshness: not inside a git worktree — skipping"
+  echo "check_sdk_freshness: not inside a git worktree, skipping"
   exit 0
 fi
 
@@ -27,7 +27,7 @@ source "$ROOT_DIR/ci/version_lib.sh"
 
 BASE_REF="${FRACTAL_BASE_REF:-origin/main}"
 if ! git rev-parse --verify --quiet "$BASE_REF" > /dev/null; then
-  fail "cannot resolve '$BASE_REF' — run 'git fetch origin main' first"
+  fail "cannot resolve '$BASE_REF', run 'git fetch origin main' first"
 fi
 
 BASE="$(git merge-base HEAD "$BASE_REF")"
@@ -35,7 +35,7 @@ BASE="$(git merge-base HEAD "$BASE_REF")"
 if [ -n "$(git status --porcelain -- sdks/godot 2>/dev/null)" ]; then
   DIRTY_SHIPPED="$(git status --porcelain -- sdks/godot | awk '{print $2}' | grep -E "$FRACTAL_SDK_SHIPPED_PATHS_REGEX|$FRACTAL_NATIVE_PATHS_REGEX|$FRACTAL_NATIVE_BIN_REGEX" || true)"
   if [ -n "$DIRTY_SHIPPED" ]; then
-    echo "check_sdk_freshness: WARNING — uncommitted changes touch native/shipped paths (these rules only see commits):" >&2
+    echo "check_sdk_freshness: WARNING, uncommitted changes touch native/shipped paths (these rules only see commits):" >&2
     echo "$DIRTY_SHIPPED" | sed 's/^/    /' >&2
   fi
 fi

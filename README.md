@@ -54,7 +54,7 @@ Each subsystem is independently toggleable. Disabled subsystems become silent no
 1. Log in to [Fractal](https://getfractal.dev) and go to **API Keys**
 2. Click **Download** next to the Godot SDK
 3. Extract the zip at the **root of your Godot project**: this creates `addons/fractal/` and `addons/fractal_native/` automatically
-4. Enable the plugin in **Project Settings → Plugins**
+4. Enable the plugin in **Project Settings -> Plugins**
 5. The `Fractal` singleton is automatically available
 
 ### Option 2: Copy the Addon Manually
@@ -62,7 +62,7 @@ Each subsystem is independently toggleable. Disabled subsystems become silent no
 1. Copy **both** `addons/fractal/` and `addons/fractal_native/` to your project's `addons/` directory
    - `addons/fractal/`, core plugin (analytics, errors, translations)
    - `addons/fractal_native/`, optional native extension for full minidump crash capture (Windows/Linux/macOS)
-2. Enable the plugin in **Project Settings → Plugins**
+2. Enable the plugin in **Project Settings -> Plugins**
 3. The `Fractal` singleton is automatically available
 
 Then call `Fractal.configure(...)` once at startup (e.g., in an autoload `_ready()`).
@@ -176,11 +176,11 @@ Counts: 36 unit + 16 integration + 3 e2e = **55 tests**. See [docs/TESTING.md](d
 
 There is no manual release step. `bin/ci` enforces version freshness on every PR via `ci/check_sdk_freshness.sh`, and merging to `main` auto-tags. Four rules, all reported together (not first-fail):
 
-- **Rule A, binary staleness.** Native source (`addons/fractal_native/{src/,SConstruct,build/setup.sh}`) changed since `addons/fractal_native/bin/<platform>/` was last committed for the **host platform** (whichever OS is running the check) → fail. Staleness on the other two platforms is a warning, not a failure. See "Per-platform binaries" below.
-- **Rule B1, version bump required.** Shipped SDK source (`addons/fractal/**` etc.) changed but `VERSION` didn't → fail, with the exact `bump_version.sh` command to run.
-- **Rule B2, increment sanity.** `VERSION` changed but isn't exactly one semver step (major, minor, or patch) ahead of `main` → fail, listing the allowed next versions.
-- **Rule B3, native bump required.** Native source changed → `VERSION` must be bumped, and the **host platform's** `NATIVE_BINARY_VERSIONS` entry must change and equal the new `VERSION` (binaries embed `VERSION` at build time). Same host-platform gating as Rule A for the other two platforms.
-- **Rule B4, unexplained binaries.** Any platform's `bin/<platform>/` changed with no matching native source change → fail (regardless of platform, this is a hygiene check, not a matrix requirement), unless `main` was already stale for that platform (a legitimate catch-up rebuild).
+- **Rule A, binary staleness.** Native source (`addons/fractal_native/{src/,SConstruct,build/setup.sh}`) changed since `addons/fractal_native/bin/<platform>/` was last committed for the **host platform** (whichever OS is running the check) -> fail. Staleness on the other two platforms is a warning, not a failure. See "Per-platform binaries" below.
+- **Rule B1, version bump required.** Shipped SDK source (`addons/fractal/**` etc.) changed but `VERSION` didn't -> fail, with the exact `bump_version.sh` command to run.
+- **Rule B2, increment sanity.** `VERSION` changed but isn't exactly one semver step (major, minor, or patch) ahead of `main` -> fail, listing the allowed next versions.
+- **Rule B3, native bump required.** Native source changed -> `VERSION` must be bumped, and the **host platform's** `NATIVE_BINARY_VERSIONS` entry must change and equal the new `VERSION` (binaries embed `VERSION` at build time). Same host-platform gating as Rule A for the other two platforms.
+- **Rule B4, unexplained binaries.** Any platform's `bin/<platform>/` changed with no matching native source change -> fail (regardless of platform, this is a hygiene check, not a matrix requirement), unless `main` was already stale for that platform (a legitimate catch-up rebuild).
 
 **Per-platform binaries.** `addons/fractal_native/bin/` holds three independent platform builds (`macos-arm64`, `linux-x86_64`, `windows-x86_64`), each tracked by its own entry in `version.gd`'s `NATIVE_BINARY_VERSIONS` dict. A developer can only build+verify the platform they're actually on, so the three entries are allowed to drift out of lockstep, CI only requires the host platform's entry to be current. The cross-platform matrix (`native_build.yml` / `bin/dispatch_matrix`) is optional: use it to backfill the other two platforms (e.g. ahead of a release), not as a required step for every native change.
 

@@ -1,7 +1,7 @@
 #!/bin/bash
 # Mechanically bumps the Godot SDK version across all lockstep files:
 # VERSION, plugin.cfg, version.gd's VERSION constant (NOT any
-# NATIVE_BINARY_VERSIONS entry — those are build_local.sh's job for the host
+# NATIVE_BINARY_VERSIONS entry, those are build_local.sh's job for the host
 # platform, or fetch_native_artifacts.sh's for the others, since they only
 # change when binaries are actually rebuilt), and a CHANGELOG.md stub.
 #
@@ -11,7 +11,7 @@
 # Usage: bump_version.sh patch|minor|major
 #
 # Computes the target from the merge-base version, not the working-tree
-# VERSION — so re-running with a different level re-levels the pending bump
+# VERSION, so re-running with a different level re-levels the pending bump
 # instead of stacking on top of an already-bumped working tree. Falls back
 # to the working-tree VERSION when VERSION doesn't exist yet at the
 # merge-base (bootstrap mode, e.g. this branch's own history).
@@ -47,7 +47,7 @@ if git -C "$REPO_ROOT" rev-parse --is-inside-work-tree > /dev/null 2>&1; then
 fi
 
 if [ -z "$CURRENT" ]; then
-  [ -f "$ROOT_DIR/VERSION" ] || fail "no merge-base VERSION and no working-tree VERSION — nothing to bump from"
+  [ -f "$ROOT_DIR/VERSION" ] || fail "no merge-base VERSION and no working-tree VERSION, nothing to bump from"
   CURRENT="$(tr -d '[:space:]' < "$ROOT_DIR/VERSION")"
 fi
 

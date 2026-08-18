@@ -1,5 +1,5 @@
 extends Node
-## Headless live-integration driver — fires real events at a real Fractal
+## Headless live-integration driver, fires real events at a real Fractal
 ## collector on http://localhost:8080, then exits.
 ##
 ## Used by sdks/godot/ci/run_e2e.sh to verify that a Godot SDK
@@ -7,12 +7,12 @@ extends Node
 ## stack. Not part of the gdUnit4 suite (no in-Godot assertions); CI asserts
 ## the resulting state in ClickHouse via curl after this scene exits.
 ##
-## ENV inputs (read at runtime — let CI inject):
+## ENV inputs (read at runtime, let CI inject):
 ##   FRACTAL_API_KEY        defaults to "ci-e2e-fixed-api-key"
 ##   FRACTAL_COLLECTOR      defaults to "http://localhost:8080"
-##   FRACTAL_API            defaults to ""           — when set, exercises Rails translations sync
+##   FRACTAL_API            defaults to "", when set, exercises Rails translations sync
 ##   FRACTAL_DRIVE_CLICKS   defaults to 12
-##   FRACTAL_DRIVE_MODE     defaults to "normal"     — one of:
+##   FRACTAL_DRIVE_MODE     defaults to "normal", one of:
 ##                            normal:        fire events, errors, translations; assert; exit 0
 ##                            crash:         configure, write breadcrumb, OS.kill self
 ##                                           (leaves an unclean session.json behind)
@@ -58,7 +58,7 @@ func _ready() -> void:
 		mode, collector, api_url, translations_enabled, click_count,
 	])
 
-	# AnalyticsGlue is bypassed via FRACTAL_CI_MODE — this is the FIRST
+	# AnalyticsGlue is bypassed via FRACTAL_CI_MODE, this is the FIRST
 	# configure() call, which means the persisted-state drain runs here
 	# with CI credentials.
 	# Uses small batch_size so the driver actually triggers a network round-trip
@@ -80,7 +80,7 @@ func _ready() -> void:
 		"analytics_flush_interval": 1.0,
 		"errors_session_marker_enabled": true,
 		"errors_heartbeat_interval_s": 60.0,
-		# native_verify intentionally skips sentry_init — drain_pending_native()
+		# native_verify intentionally skips sentry_init, drain_pending_native()
 		# uploads leftovers without arming Crashpad, avoiding a WSL2 spin-loop.
 		"errors_native_enabled": (mode == "native_crash"),
 		"debug": true,
@@ -90,13 +90,13 @@ func _ready() -> void:
 
 	if mode == "crash":
 		await _run_crash_mode()
-		return  # _run_crash_mode never returns normally — it OS.kills.
+		return  # _run_crash_mode never returns normally, it OS.kills.
 	if mode == "verify_replay":
 		await _run_verify_replay_mode()
 		return
 	if mode == "native_crash":
 		await _run_native_crash_mode()
-		return  # also never returns — segfaults via Crashpad
+		return  # also never returns, segfaults via Crashpad
 	if mode == "native_verify":
 		await _run_native_verify_mode()
 		return
@@ -140,16 +140,16 @@ func _ready() -> void:
 		batches_sent[0], errors_sent[0], sync_results.size(),
 	])
 	if batches_sent[0] == 0:
-		push_error("[drive] no batches were acknowledged by collector — failing")
+		push_error("[drive] no batches were acknowledged by collector, failing")
 		get_tree().quit(1)
 		return
 	if errors_sent[0] == 0:
-		push_error("[drive] no errors were acknowledged by collector — failing")
+		push_error("[drive] no errors were acknowledged by collector, failing")
 		get_tree().quit(1)
 		return
 	if translations_enabled:
 		if sync_results.is_empty():
-			push_error("[drive] translations sync did not succeed — failing")
+			push_error("[drive] translations sync did not succeed, failing")
 			get_tree().quit(1)
 			return
 		# Confirm a synced key actually resolves through TranslationServer.
@@ -163,7 +163,7 @@ func _ready() -> void:
 			get_tree().quit(1)
 			return
 
-	print("[drive] OK — exiting 0")
+	print("[drive] OK, exiting 0")
 	get_tree().quit(0)
 
 
@@ -178,7 +178,7 @@ func _run_crash_mode() -> void:
 	Fractal.errors._on_heartbeat()
 	# Defer one frame so the file write completes before kill.
 	await get_tree().process_frame
-	print("[drive] mode=crash — sending SIGKILL to self")
+	print("[drive] mode=crash, sending SIGKILL to self")
 	OS.kill(OS.get_process_id())
 
 
@@ -189,10 +189,10 @@ func _run_verify_replay_mode() -> void:
 	Fractal.errors.error_sent.connect(func(): sent[0] += 1)
 	var ok: bool = await _wait_for(func(): return sent[0] >= 1, 8000)
 	if not ok:
-		push_error("[drive] mode=verify_replay — no AbnormalShutdown was POSTed within 8s")
+		push_error("[drive] mode=verify_replay, no AbnormalShutdown was POSTed within 8s")
 		get_tree().quit(1)
 		return
-	print("[drive] mode=verify_replay — AbnormalShutdown POSTed; exiting 0")
+	print("[drive] mode=verify_replay, AbnormalShutdown POSTed; exiting 0")
 	get_tree().quit(0)
 
 
@@ -206,41 +206,41 @@ func _wait_for(predicate: Callable, timeout_ms: int) -> bool:
 
 func _run_native_crash_mode() -> void:
 	# Phase 1 of the native-crash-replay test. Requires the FractalNative
-	# GDExtension to be present on this platform — fails loudly if not,
+	# GDExtension to be present on this platform, fails loudly if not,
 	# because the workflow is supposed to have built and dropped it in.
 	if not Engine.has_singleton("FractalNative"):
-		push_error("[drive] mode=native_crash: FractalNative singleton missing — addon not built for this platform")
+		push_error("[drive] mode=native_crash: FractalNative singleton missing, addon not built for this platform")
 		get_tree().quit(1)
 		return
 	var native = Engine.get_singleton("FractalNative")
 	if not native.is_initialized():
-		push_error("[drive] mode=native_crash: native init() never ran — errors_native_enabled didn't take")
+		push_error("[drive] mode=native_crash: native init() never ran, errors_native_enabled didn't take")
 		get_tree().quit(1)
 		return
 	# Tag the crash for downstream identification in CH.
 	Fractal.errors.set_tag("ci_native_phase", "1")
 	Fractal.errors.add_breadcrumb("about to native-segfault", "test", "warning")
 	# Tick session marker so the breadcrumb is also persisted via the
-	# heartbeat layer — useful belt-and-suspenders if Crashpad happens
+	# heartbeat layer, useful belt-and-suspenders if Crashpad happens
 	# to fail to write for any reason.
 	Fractal.errors._on_heartbeat()
 	await get_tree().process_frame
-	print("[drive] mode=native_crash — calling FractalNative._force_segfault_for_testing()")
+	print("[drive] mode=native_crash, calling FractalNative._force_segfault_for_testing()")
 	native._force_segfault_for_testing()
-	# Unreachable — the deref above triggers SIGSEGV; Crashpad's handler
+	# Unreachable, the deref above triggers SIGSEGV; Crashpad's handler
 	# writes the minidump out-of-process and the parent dies.
-	push_error("[drive] mode=native_crash: UNREACHABLE — segfault didn't happen")
+	push_error("[drive] mode=native_crash: UNREACHABLE, segfault didn't happen")
 	get_tree().quit(1)
 
 
 func _run_native_verify_mode() -> void:
 	# Phase 2 of the native-crash-replay test. configure() with
-	# errors_native_enabled=true → _arm_native() → _drain_pending_minidumps()
+	# errors_native_enabled=true -> _arm_native() -> _drain_pending_minidumps()
 	# enumerates the dump from phase 1 and uploads each via /v1/minidumps.
 	# We wait for the per-dump request to complete, then exit 0.
 	#
 	# Native uploads use FractalHttpClient.request_raw_bytes (multipart),
-	# bypassing the regular /v1/errors path — so error_sent is NOT a
+	# bypassing the regular /v1/errors path, so error_sent is NOT a
 	# reliable signal here. Instead we poll the on-disk minidump
 	# directory: when it's empty, the upload(s) succeeded.
 	var helpers = load("res://addons/fractal_native/fractal_native.gd")
@@ -252,11 +252,11 @@ func _run_native_verify_mode() -> void:
 	var db_path: String = helpers.database_path()
 	var initial_count: int = native.pending_minidumps(db_path).size()
 	if initial_count == 0:
-		push_error("[drive] mode=native_verify: no pending minidumps to drain — phase 1 didn't run or didn't crash")
+		push_error("[drive] mode=native_verify: no pending minidumps to drain, phase 1 didn't run or didn't crash")
 		get_tree().quit(1)
 		return
 	print("[drive] mode=native_verify: %d pending minidump(s) to upload" % initial_count)
-	# Drain without sentry_init — avoids the WSL2 Crashpad spin-loop.
+	# Drain without sentry_init, avoids the WSL2 Crashpad spin-loop.
 	Fractal.errors.drain_pending_native()
 	var ok: bool = await _wait_for(
 		func(): return native.pending_minidumps(db_path).size() < initial_count,

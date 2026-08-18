@@ -1,5 +1,5 @@
 extends Control
-## Settings/debug menu — language picker, translation sync, error throw triggers.
+## Settings/debug menu, language picker, translation sync, error throw triggers.
 
 const MENU_SCENE := "res://test_game/scenes/main_menu.tscn"
 
@@ -100,7 +100,7 @@ func _on_throw_fatal() -> void:
 
 
 func _on_force_crash_pressed() -> void:
-	# Confirmation dialog — guarded so the player can't trash their session
+	# Confirmation dialog, guarded so the player can't trash their session
 	# from a stray click.
 	crash_confirm.popup_centered()
 
@@ -110,7 +110,7 @@ func _on_crash_confirmed() -> void:
 
 
 func _on_kill_app_pressed() -> void:
-	# Sends SIGKILL to our own process — exits without firing
+	# Sends SIGKILL to our own process, exits without firing
 	# NOTIFICATION_CRASH or NOTIFICATION_WM_CLOSE_REQUEST. The next launch
 	# detects this via the heartbeat session marker and reports an
 	# AbnormalShutdown error.
@@ -122,7 +122,7 @@ func _on_force_segfault_pressed() -> void:
 	# catches the SIGSEGV out-of-process and writes a real minidump. Next
 	# launch drains the dump and uploads to /v1/minidumps as a NativeCrash.
 	if not Engine.has_singleton("FractalNative"):
-		push_warning("FractalNative GDExtension not installed — segfault button is a no-op")
+		push_warning("FractalNative GDExtension not installed, segfault button is a no-op")
 		return
 	var native = Engine.get_singleton("FractalNative")
 	native._force_segfault_for_testing()

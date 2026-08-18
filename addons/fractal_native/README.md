@@ -15,7 +15,7 @@ crashes the heartbeat layer can only flag, not stack-trace.
 
 | Platform | Built? | Verified? |
 | --- | --- | --- |
-| macOS arm64 | ✓ committed binary | ✓ end-to-end SIGSEGV → minidump → upload |
+| macOS arm64 | ✓ committed binary | ✓ end-to-end SIGSEGV -> minidump -> upload |
 | macOS x86_64 | CI matrix | not yet validated |
 | Linux x86_64 | CI matrix | not yet validated |
 | Windows x86_64 | CI matrix | not yet validated |

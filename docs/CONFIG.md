@@ -1,6 +1,6 @@
 # Configuration
 
-Configuration goes through `Fractal.configure(...)`, which accepts either a `FractalConfig` Resource or a `Dictionary` of overrides. Calling it more than once is supported — each subsystem is reconfigured with the new settings (useful for runtime toggles, e.g. consent UIs).
+Configuration goes through `Fractal.configure(...)`, which accepts either a `FractalConfig` Resource or a `Dictionary` of overrides. Calling it more than once is supported, each subsystem is reconfigured with the new settings (useful for runtime toggles, e.g. consent UIs).
 
 ## Fields
 
@@ -10,7 +10,7 @@ Configuration goes through `Fractal.configure(...)`, which accepts either a `Fra
 | `project_id` | String | `""` | **Deprecated, unused.** The API key alone identifies your project. Kept for resource back-compat; safe to remove. |
 | `collector_url` | String | `"https://collector.getfractal.dev"` | Base URL of the Go collector. Used by analytics + errors. Override only for a self-hosted collector. |
 | `api_url` | String | `"http://localhost:3001"` | Base URL of the Rails API. Used by translations sync. |
-| `app_version` | String | `"1.0.0"` | Sent with every request — useful for filtering. |
+| `app_version` | String | `"1.0.0"` | Sent with every request, useful for filtering. |
 | `environment` | String | `"development"` | One of `development \| staging \| production`. Tagged onto errors and analytics. |
 | `debug` | bool | `false` | Print SDK debug logs to stdout. |
 | `analytics_enabled` | bool | `true` | Toggle analytics. When `false`, every `Fractal.analytics.*` call is a no-op. |
@@ -32,7 +32,7 @@ Configuration goes through `Fractal.configure(...)`, which accepts either a `Fra
 
 ### Resource file (recommended for shipped builds)
 
-Create `fractal_config.tres` in your project (right-click any folder → New Resource → FractalConfig), edit fields in the inspector, then:
+Create `fractal_config.tres` in your project (right-click any folder -> New Resource -> FractalConfig), edit fields in the inspector, then:
 
 ```gdscript
 Fractal.configure(preload("res://fractal_config.tres"))
@@ -50,7 +50,7 @@ Fractal.configure({
 })
 ```
 
-You can mix the two — load defaults from the `.tres`, then call `configure()` again with a dictionary override.
+You can mix the two, load defaults from the `.tres`, then call `configure()` again with a dictionary override.
 
 ## Validation
 

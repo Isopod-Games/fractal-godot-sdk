@@ -1,6 +1,6 @@
 @tool
 extends Node
-## Fractal SDK autoload — single facade for analytics, errors, and translations.
+## Fractal SDK autoload, single facade for analytics, errors, and translations.
 ##
 ## Configure once at startup, then use the subsystem accessors:
 ##
@@ -19,7 +19,7 @@ const FractalAnalyticsClass := preload("res://addons/fractal/analytics/analytics
 const FractalErrorsClass := preload("res://addons/fractal/errors/errors.gd")
 const FractalTranslationsClass := preload("res://addons/fractal/translations/translations.gd")
 
-## Subsystems. Always non-null after configure() — they short-circuit when disabled.
+## Subsystems. Always non-null after configure(), they short-circuit when disabled.
 var analytics
 var errors
 var translations
@@ -57,7 +57,7 @@ func _notification(what: int) -> void:
 
 ## Configures the SDK. Accepts either a `FractalConfig` Resource or a Dictionary
 ## of overrides (merged on top of defaults). Calling configure() repeatedly is
-## supported — the SDK will reconfigure each subsystem with the new settings.
+## supported, the SDK will reconfigure each subsystem with the new settings.
 func configure(config_or_dict) -> void:
 	if config_or_dict is Dictionary:
 		_config = _config.merged(config_or_dict)
@@ -84,7 +84,7 @@ func configure(config_or_dict) -> void:
 		])
 
 	# Errors subsystem drains its own persisted state (queued errors,
-	# crash report, abnormal-shutdown inference) inside configure() —
+	# crash report, abnormal-shutdown inference) inside configure()
 	# the explicit call from here is no longer needed.
 	if _config.translations_enabled and _config.translations_sync_on_startup:
 		translations.sync()

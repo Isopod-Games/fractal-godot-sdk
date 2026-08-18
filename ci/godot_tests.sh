@@ -37,7 +37,7 @@ cd "$PROJECT_DIR"
 "$GODOT_BIN" --headless --path . --import || true
 
 # AnalyticsGlue (the test_game autoload) self-configures a live Fractal
-# singleton on _ready() unless FRACTAL_CI_MODE is set — see
+# singleton on _ready() unless FRACTAL_CI_MODE is set, see
 # test_game/scripts/analytics_glue.gd. Without this, that singleton runs
 # for the entire headless test session, retrying real network requests
 # against an unreachable localhost collector and read/writing the same

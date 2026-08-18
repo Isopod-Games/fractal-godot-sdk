@@ -14,7 +14,7 @@ extends RefCounted
 ##      NOTIFICATION_CRASH or any other in-process crash signal fires.
 ##
 ## Schema is the cross-engine contract documented in
-## sdks/shared/CRASH_PROTOCOL.md — Unity / Unreal / JS SDKs MUST write the
+## sdks/shared/CRASH_PROTOCOL.md, Unity / Unreal / JS SDKs MUST write the
 ## same JSON shape into their respective persistent-data directories so the
 ## backend's `/v1/errors` ingestion stays uniform.
 
@@ -46,7 +46,7 @@ func load_previous() -> Dictionary:
 		return {}
 	var json := JSON.new()
 	if json.parse(text) != OK:
-		# Corrupt marker — drop it.
+		# Corrupt marker, drop it.
 		_remove_file()
 		return {}
 	var data: Variant = json.data
@@ -71,7 +71,7 @@ func start_new(static_fields: Dictionary) -> void:
 
 
 ## Rewrite the marker with a fresh heartbeat timestamp and the supplied
-## breadcrumb snapshot. Cheap — call from a Timer at low frequency (~10s).
+## breadcrumb snapshot. Cheap, call from a Timer at low frequency (~10s).
 func tick(breadcrumbs: Array, user: Dictionary, tags: Dictionary) -> void:
 	if _state.is_empty():
 		return
